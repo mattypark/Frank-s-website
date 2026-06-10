@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frank — ask me anything</title>
+  <meta name="description" content="Frank's personal site. A terminal you can talk to. Type ? to begin." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/global.css" />
+</head>
+<body>
+  <main>
+    <!-- ============ PAGE 1 — HERO ============ -->
+    <section class="hero" id="hero" aria-labelledby="hero-heading">
+      <header class="hero-top">
+        <span class="hero-top-item mono">frank@web ~ %</span>
+        <span class="hero-top-item mono hero-clock" id="hero-clock">--:--:--</span>
+      </header>
+
+      <div class="hero-center">
+        <p class="hero-kicker mono" data-reveal>// personal site, v1.0</p>
+        <h1 class="hero-heading" id="hero-heading">
+          <span class="hero-line" data-reveal>Hey, I'm Frank.</span>
+          <span class="hero-line hero-line-dim" data-reveal>What do you want to ask?</span>
+        </h1>
+
+        <div class="hero-prompt mono" data-reveal>
+          <span class="prompt-symbol" aria-hidden="true">&gt;</span>
+          <span class="prompt-hint">
+            type <button class="prompt-key" id="hint-key" type="button">?</button> to see what I answer
+          </span>
+          <span class="cursor" aria-hidden="true"></span>
+        </div>
+
+        <p class="hero-summary" data-reveal>
+          This site works like a terminal. One word in, a piece of my life out.
+          Ask about the story, the startup, or just say hi.
+        </p>
+      </div>
+
+      <footer class="hero-bottom">
+        <span class="mono hero-bottom-item">[ black &amp; white edition ]</span>
+        <button class="scroll-cue mono" id="scroll-cue" type="button" aria-label="Scroll to terminal">
+          scroll ↓ to open terminal
+        </button>
+        <span class="mono hero-bottom-item">est. 2026</span>
+      </footer>
+    </section>
+
+    <!-- ============ PAGE 2 — TERMINAL ============ -->
+    <section class="terminal-section" id="terminal" aria-labelledby="terminal-heading">
+      <h2 class="visually-hidden" id="terminal-heading">Interactive terminal</h2>
+
+      <div class="terminal-window" id="terminal-window">
+        <div class="terminal-titlebar mono">
+          <span class="titlebar-dots" aria-hidden="true">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </span>
+          <span class="titlebar-label">frank.sh — ask anything</span>
+          <span class="titlebar-hint">type ? for help</span>
+        </div>
+
+        <div class="terminal-body" id="terminal-body" aria-live="polite">
+          <div class="terminal-output mono" id="terminal-output"></div>
+
+          <form class="terminal-input-row mono" id="terminal-form" autocomplete="off">
+            <label class="visually-hidden" for="terminal-input">Type a command</label>
+            <span class="prompt-symbol" aria-hidden="true">&gt;</span>
+            <input
+              class="terminal-input"
+              id="terminal-input"
+              name="command"
+              type="text"
+              placeholder="?"
+              spellcheck="false"
+              autocapitalize="off"
+            />
+          </form>
+        </div>
+      </div>
+
+      <p class="terminal-footnote mono">
+        try: <button class="chip" data-cmd="?">?</button>
+        <button class="chip" data-cmd="crazy">crazy</button>
+        <button class="chip" data-cmd="startup">startup</button>
+        <button class="chip" data-cmd="contact">contact</button>
+      </p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+  <script src="js/commands.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# env / secrets
+.env
+.env.*
+
+# OS
+.DS_Store
+
+# editor
+.vscode/
+.idea/
+
+# build output
+dist/
+build/

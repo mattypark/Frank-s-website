@@ -1,0 +1,27 @@
+:root {
+  /* palette — black & white, mostly white */
+  --color-surface: oklch(99% 0 0);
+  --color-surface-alt: oklch(97% 0 0);
+  --color-ink: oklch(15% 0 0);
+  --color-ink-dim: oklch(45% 0 0);
+  --color-ink-faint: oklch(70% 0 0);
+  --color-line: oklch(88% 0 0);
+  --color-terminal: oklch(10% 0 0);
+  --color-terminal-text: oklch(96% 0 0);
+  --color-terminal-dim: oklch(65% 0 0);
+
+  /* typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --text-base: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
+  --text-small: 0.8125rem;
+  --text-hero: clamp(2.5rem, 1rem + 6vw, 6.5rem);
+
+  /* spacing */
+  --space-page-pad: clamp(1.25rem, 0.5rem + 3vw, 3.5rem);
+
+  /* motion */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
