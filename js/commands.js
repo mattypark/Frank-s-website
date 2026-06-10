@@ -47,4 +47,5 @@ const FRANK_FALLBACK = (cmd) => [
 
 // Google Apps Script web app URL — messages land in Frank's Google Sheet.
 // Deploy the script in GOOGLE_SHEET_SETUP.md, paste the /exec URL here.
-const MESSAGE_ENDPOINT = "";
+const MESSAGE_ENDPOINT =
+  "https://script.google.com/macros/s/AKfycbyj0usHWcAgpDDNeTLz6VmKFZsNZtqswhMphH0SYa7qH1_DYzfN_gSKme9rPLHv3z1h/exec";
