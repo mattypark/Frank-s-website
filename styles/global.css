@@ -355,6 +355,41 @@ body {
   color: var(--color-ink);
 }
 
+/* ============ CUSTOM CURSOR ============ */
+
+.custom-cursor,
+.custom-cursor * {
+  cursor: none !important;
+}
+
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 9999;
+  /* difference blend: black ring reads on white page, flips white over the terminal */
+  mix-blend-mode: difference;
+  background: white;
+}
+
+.cursor-ring {
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: -1.125rem 0 0 -1.125rem;
+  background: transparent;
+  border: 1.5px solid white;
+}
+
+.cursor-dot {
+  width: 0.3125rem;
+  height: 0.3125rem;
+  margin: -0.15625rem 0 0 -0.15625rem;
+}
+
 /* ============ MOTION SAFETY ============ */
 
 @media (prefers-reduced-motion: reduce) {
