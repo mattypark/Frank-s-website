@@ -1,16 +1,4 @@
-// ============ smooth scroll (SexyScroll spring + GSAP ScrollTrigger) ============
-gsap.registerPlugin(ScrollTrigger);
-
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-// Portfolio preset feel: ~0.5s settle, capped speed.
-const sexyScroll = prefersReducedMotion
-  ? null
-  : new SexyScroll({ smoothTime: 0.5, maxSpeed: 4000 });
-
-if (sexyScroll) {
-  sexyScroll.on(ScrollTrigger.update);
-}
 
 // ============ hero entrance (GSAP) ============
 if (!prefersReducedMotion) {
@@ -22,16 +10,50 @@ if (!prefersReducedMotion) {
     stagger: 0.12,
     delay: 0.15,
   });
+
+  gsap.from("#terminal-window", {
+    y: 60,
+    opacity: 0,
+    duration: 1,
+    ease: "expo.out",
+    delay: 0.5,
+  });
 }
 
 // ============ live clock ============
+// Frank lives in Texas — show his local time (US Central)
 const clockEl = document.getElementById("hero-clock");
 
 const tickClock = () => {
-  clockEl.textContent = new Date().toLocaleTimeString("en-US", { hour12: false });
+  const centralTime = new Date().toLocaleTimeString("en-US", {
+    hour12: false,
+    timeZone: "America/Chicago",
+  });
+  clockEl.textContent = `${centralTime} TX`;
 };
 tickClock();
 setInterval(tickClock, 1000);
+
+// ============ statement: auto fill-in, hold, fade back, repeat ============
+const statement = document.getElementById("hero-statement");
+const words = statement.textContent.trim().split(/\s+/);
+statement.replaceChildren(
+  ...words.flatMap((word, i) => {
+    const span = document.createElement("span");
+    span.className = "statement-word";
+    span.textContent = word;
+    return i < words.length - 1 ? [span, document.createTextNode(" ")] : [span];
+  })
+);
+
+if (prefersReducedMotion) {
+  gsap.set(".statement-word", { opacity: 1 });
+} else {
+  gsap
+    .timeline({ repeat: -1, repeatDelay: 1.2, delay: 1 })
+    .to(".statement-word", { opacity: 1, duration: 0.35, ease: "none", stagger: 0.07 })
+    .to(".statement-word", { opacity: 0.12, duration: 0.3, ease: "none", stagger: 0.05 }, "+=2.5");
+}
 
 // ============ terminal ============
 const output = document.getElementById("terminal-output");
@@ -86,15 +108,78 @@ const typeLines = (lines, className) => {
 };
 
 let isTyping = false;
+let isMessageMode = false;
+
+const sendMessage = async (text) => {
+  if (!MESSAGE_ENDPOINT) {
+    await typeLines(
+      ["message box isn't wired up yet — email me instead (type contact)."],
+      "out-text"
+    );
+    return;
+  }
+
+  try {
+    // Apps Script web apps don't return CORS headers; no-cors fire-and-forget.
+    await fetch(MESSAGE_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ message: text }),
+    });
+    await typeLines(["sent. frank will actually read this. thanks :)"], "out-text");
+  } catch {
+    await typeLines(["hm, that didn't send. try again in a bit?"], "out-text");
+  }
+};
 
 const runCommand = async (raw) => {
-  const cmd = raw.trim().toLowerCase();
-  if (!cmd || isTyping) return;
+  const text = raw.trim();
+  if (!text || isTyping) return;
 
+  if (isMessageMode) {
+    isMessageMode = false;
+    input.placeholder = "?";
+    appendLine(`> ${text}`, "out-cmd");
+
+    if (text.toLowerCase() === "cancel") {
+      isTyping = true;
+      await typeLines(["message cancelled."], "out-text");
+      appendLine("", "out-text");
+      isTyping = false;
+      return;
+    }
+
+    isTyping = true;
+    await sendMessage(text);
+    appendLine("", "out-text");
+    isTyping = false;
+    return;
+  }
+
+  const cmd = text.toLowerCase();
   appendLine(`> ${cmd}`, "out-cmd");
 
   if (cmd === "clear") {
     output.replaceChildren();
+    return;
+  }
+
+  if (cmd === "message") {
+    isTyping = true;
+    appendLine("── send frank a message ──", "out-title");
+    await typeLines(
+      [
+        "type anything — feedback, a question, a hello.",
+        "it lands directly in frank's inbox.",
+        'hit enter to send, or type "cancel" to back out.',
+      ],
+      "out-text"
+    );
+    isTyping = false;
+    isMessageMode = true;
+    input.placeholder = "your message...";
+    input.focus();
     return;
   }
 
@@ -128,47 +213,15 @@ document.querySelectorAll(".chip").forEach((chip) => {
   });
 });
 
-// ============ scroll-to-terminal helpers ============
-const scrollToTerminal = () => {
-  const targetY = document.getElementById("terminal").offsetTop;
-  if (sexyScroll) {
-    sexyScroll.scrollTo(targetY);
-  } else {
-    window.scrollTo(0, targetY);
-  }
-  setTimeout(() => input.focus({ preventScroll: true }), prefersReducedMotion ? 0 : 900);
-};
-
-document.getElementById("scroll-cue").addEventListener("click", scrollToTerminal);
-
-document.getElementById("hint-key").addEventListener("click", () => {
-  scrollToTerminal();
-  setTimeout(() => runCommand("?"), prefersReducedMotion ? 50 : 1300);
-});
-
-// pressing "?" anywhere on the hero jumps into the terminal
+// pressing "?" anywhere focuses the terminal and shows help
 document.addEventListener("keydown", (event) => {
   const typingInInput = document.activeElement === input;
   if (event.key === "?" && !typingInInput) {
     event.preventDefault();
-    scrollToTerminal();
-    setTimeout(() => runCommand("?"), prefersReducedMotion ? 50 : 1300);
+    input.focus();
+    runCommand("?");
   }
 });
-
-// terminal window slides up as you reach page 2
-if (!prefersReducedMotion) {
-  gsap.from("#terminal-window", {
-    y: 80,
-    opacity: 0,
-    duration: 1,
-    ease: "expo.out",
-    scrollTrigger: {
-      trigger: "#terminal",
-      start: "top 70%",
-    },
-  });
-}
 
 // greet on load so the terminal never looks dead
 typeLines(['frank.sh booted. type "?" to start.'], "out-text");

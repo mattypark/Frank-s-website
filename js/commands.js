@@ -4,15 +4,16 @@ const FRANK_COMMANDS = {
   "?": {
     title: "available commands",
     body: [
-      "crazy    — the whole life story, start to now",
-      "startup  — what I'm building right now",
+      "story    — the whole life story, start to now",
+      "building — what I'm building right now",
+      "message  — send me a message, goes straight to me",
       "contact  — how to reach me",
       "clear    — wipe the screen",
       "",
       "type any word above and hit enter.",
     ],
   },
-  crazy: {
+  story: {
     title: "the whole story",
     body: [
       "[placeholder — Frank's full life story goes here]",
@@ -21,10 +22,10 @@ const FRANK_COMMANDS = {
       "From day one to today, the long version.",
     ],
   },
-  startup: {
+  building: {
     title: "what I'm building",
     body: [
-      "[placeholder — Frank's current startup goes here]",
+      "[placeholder — Frank's current projects go here]",
       "",
       "The problem, the product, and why now.",
     ],
@@ -43,3 +44,7 @@ const FRANK_FALLBACK = (cmd) => [
   `command not found: ${cmd}`,
   'type "?" to see what I answer.',
 ];
+
+// Google Apps Script web app URL — messages land in Frank's Google Sheet.
+// Deploy the script in GOOGLE_SHEET_SETUP.md, paste the /exec URL here.
+const MESSAGE_ENDPOINT = "";
