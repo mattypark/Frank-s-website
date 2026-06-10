@@ -108,9 +108,12 @@ const typeLines = (lines, className) => {
 };
 
 let isTyping = false;
-let isMessageMode = false;
+// message flow: ask name → email → message, then send all three
+let messageFlow = null;
 
-const sendMessage = async (text) => {
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const sendMessage = async ({ name, email, message }) => {
   if (!MESSAGE_ENDPOINT) {
     await typeLines(
       ["message box isn't wired up yet — email me instead (type contact)."],
@@ -125,35 +128,64 @@ const sendMessage = async (text) => {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ message: text }),
+      body: JSON.stringify({ name, email, message }),
     });
-    await typeLines(["sent. frank will actually read this. thanks :)"], "out-text");
+    await typeLines([`sent. frank will actually read this. thanks, ${name} :)`], "out-text");
   } catch {
     await typeLines(["hm, that didn't send. try again in a bit?"], "out-text");
   }
+};
+
+const endMessageFlow = () => {
+  messageFlow = null;
+  input.placeholder = "?";
+};
+
+const handleMessageStep = async (text) => {
+  appendLine(`> ${text}`, "out-cmd");
+
+  if (text.toLowerCase() === "cancel") {
+    endMessageFlow();
+    isTyping = true;
+    await typeLines(["message cancelled."], "out-text");
+    appendLine("", "out-text");
+    isTyping = false;
+    return;
+  }
+
+  isTyping = true;
+
+  if (messageFlow.step === "name") {
+    messageFlow.name = text;
+    messageFlow.step = "email";
+    await typeLines([`hey ${text}. what's your email?`], "out-text");
+    input.placeholder = "you@example.com";
+  } else if (messageFlow.step === "email") {
+    if (!EMAIL_PATTERN.test(text)) {
+      await typeLines(["that doesn't look like an email — try again?"], "out-text");
+    } else {
+      messageFlow.email = text;
+      messageFlow.step = "message";
+      await typeLines(["got it. what's the message you want to send?"], "out-text");
+      input.placeholder = "your message...";
+    }
+  } else {
+    const payload = { name: messageFlow.name, email: messageFlow.email, message: text };
+    endMessageFlow();
+    await sendMessage(payload);
+    appendLine("", "out-text");
+  }
+
+  isTyping = false;
+  input.focus();
 };
 
 const runCommand = async (raw) => {
   const text = raw.trim();
   if (!text || isTyping) return;
 
-  if (isMessageMode) {
-    isMessageMode = false;
-    input.placeholder = "?";
-    appendLine(`> ${text}`, "out-cmd");
-
-    if (text.toLowerCase() === "cancel") {
-      isTyping = true;
-      await typeLines(["message cancelled."], "out-text");
-      appendLine("", "out-text");
-      isTyping = false;
-      return;
-    }
-
-    isTyping = true;
-    await sendMessage(text);
-    appendLine("", "out-text");
-    isTyping = false;
+  if (messageFlow) {
+    await handleMessageStep(text);
     return;
   }
 
@@ -170,15 +202,16 @@ const runCommand = async (raw) => {
     appendLine("── send frank a message ──", "out-title");
     await typeLines(
       [
-        "type anything — feedback, a question, a hello.",
-        "it lands directly in frank's inbox.",
-        'hit enter to send, or type "cancel" to back out.',
+        "three quick questions, then it lands in frank's inbox.",
+        'type "cancel" anytime to back out.',
+        "",
+        "what's your name?",
       ],
       "out-text"
     );
     isTyping = false;
-    isMessageMode = true;
-    input.placeholder = "your message...";
+    messageFlow = { step: "name", name: "", email: "" };
+    input.placeholder = "your name...";
     input.focus();
     return;
   }

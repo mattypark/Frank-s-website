@@ -6,7 +6,7 @@ web app, which appends them to a Google Sheet.
 ## 1. Create the Sheet
 
 1. Go to [sheets.new](https://sheets.new), name it `Frank Site Messages`.
-2. Row 1 headers: `Timestamp` | `Message`.
+2. Row 1 headers: `Timestamp` | `Name` | `Email` | `Message`.
 
 ## 2. Add the Apps Script
 
@@ -17,20 +17,24 @@ web app, which appends them to a Google Sheet.
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-  let message = "";
+  let data = {};
   try {
-    message = JSON.parse(e.postData.contents).message || "";
+    data = JSON.parse(e.postData.contents) || {};
   } catch (err) {
-    message = e.postData.contents || "";
+    data = { message: e.postData.contents || "" };
   }
 
-  // basic guardrails: trim + cap length
-  message = String(message).trim().slice(0, 2000);
+  // basic guardrails: trim + cap lengths
+  const clean = (value, max) => String(value || "").trim().slice(0, max);
+  const name = clean(data.name, 200);
+  const email = clean(data.email, 320);
+  const message = clean(data.message, 2000);
+
   if (!message) {
     return ContentService.createTextOutput("empty");
   }
 
-  sheet.appendRow([new Date(), message]);
+  sheet.appendRow([new Date(), name, email, message]);
   return ContentService.createTextOutput("ok");
 }
 ```
