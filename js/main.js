@@ -1,12 +1,16 @@
-// ============ smooth scroll (Lenis + GSAP ScrollTrigger) ============
+// ============ smooth scroll (SexyScroll spring + GSAP ScrollTrigger) ============
 gsap.registerPlugin(ScrollTrigger);
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const lenis = new Lenis({ smoothWheel: !prefersReducedMotion });
-lenis.on("scroll", ScrollTrigger.update);
-gsap.ticker.add((time) => lenis.raf(time * 1000));
-gsap.ticker.lagSmoothing(0);
+// Portfolio preset feel: ~0.5s settle, capped speed.
+const sexyScroll = prefersReducedMotion
+  ? null
+  : new SexyScroll({ smoothTime: 0.5, maxSpeed: 4000 });
+
+if (sexyScroll) {
+  sexyScroll.on(ScrollTrigger.update);
+}
 
 // ============ hero entrance (GSAP) ============
 if (!prefersReducedMotion) {
@@ -126,8 +130,13 @@ document.querySelectorAll(".chip").forEach((chip) => {
 
 // ============ scroll-to-terminal helpers ============
 const scrollToTerminal = () => {
-  lenis.scrollTo("#terminal", { duration: prefersReducedMotion ? 0 : 1.2 });
-  setTimeout(() => input.focus({ preventScroll: true }), prefersReducedMotion ? 0 : 1200);
+  const targetY = document.getElementById("terminal").offsetTop;
+  if (sexyScroll) {
+    sexyScroll.scrollTo(targetY);
+  } else {
+    window.scrollTo(0, targetY);
+  }
+  setTimeout(() => input.focus({ preventScroll: true }), prefersReducedMotion ? 0 : 900);
 };
 
 document.getElementById("scroll-cue").addEventListener("click", scrollToTerminal);
