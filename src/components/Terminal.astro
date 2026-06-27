@@ -226,8 +226,9 @@ const EMAIL = "frank.z.niu@gmail.com";
     story: {
       title: "the short story",
       body: [
-        "18, from Texas. Got pulled into finance early, then AI.",
-        "Started Axiom Pathways to put students inside real startups.",
+        "18. Born in Shanghai, grew up in Texas.",
+        "Got pulled into finance early, then AI — and started",
+        "Axiom Pathways to put students inside real startups.",
         "",
         "the full timeline — birth to now — is up the page.",
       ],
@@ -235,11 +236,11 @@ const EMAIL = "frank.z.niu@gmail.com";
     building: {
       title: "what I'm building",
       body: [
-        "Axiom Pathways — pairing student chapters with real startups.",
-        "5 startups, 58 interns placed so far.",
+        "Axiom Pathways — my 501(c)(3) for the AI-shaped workforce.",
+        "AI literacy + marketing: articles, videos, and pairing",
+        "students with real internships at partnered startups.",
         "",
-        "the bet: give teenagers real responsibility, and they build",
-        "things that matter.",
+        "9 startup partners, 330 interested interns so far.",
       ],
     },
     contact: {
@@ -432,7 +433,14 @@ const EMAIL = "frank.z.niu@gmail.com";
     });
     root.querySelectorAll<HTMLButtonElement>(".chip").forEach((chip) => {
       chip.addEventListener("click", () => {
-        run(chip.dataset.cmd || "");
+        const cmd = chip.dataset.cmd || "";
+        // chips are commands, not answers — if a message is in progress,
+        // abandon it so e.g. "clear" actually clears instead of becoming a name
+        if (messageFlow) {
+          endFlow();
+          if (cmd !== "clear") appendLine("message cancelled.", "out-text");
+        }
+        run(cmd);
         if (!tapOnly()) input.focus();
       });
     });

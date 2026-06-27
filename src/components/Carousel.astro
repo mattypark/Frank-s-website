@@ -86,7 +86,7 @@ const cardTint = (idx: string) => TINTS[idx] ?? "rgb(40,40,40)";
   .cv__stage {
     position: relative;
     width: 100%;
-    height: clamp(380px, 66dvh, 700px);
+    height: clamp(360px, 60dvh, 680px);
     touch-action: pan-y;
   }
   @media (max-width: 480px) {
@@ -512,8 +512,12 @@ const cardTint = (idx: string) => TINTS[idx] ?? "rgb(40,40,40)";
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, w < 700 ? 1.5 : 2));
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
-      const fit = Math.max(1, 1.15 - w / 1400);
-      camNormalPos.set(0, 0, R + 6.2 * fit);
+      // pull the camera back far enough that the front panel fits the viewport
+      // WIDTH (the tight constraint in portrait) — so it shrinks on phones
+      const vHalf = Math.tan(((40 * Math.PI) / 180) / 2); // tan(vfov/2)
+      const hHalf = vHalf * Math.min(camera.aspect, 1.7); // tan(hfov/2), capped
+      const distToPanel = (panelW * 0.5 * 1.45) / hHalf;
+      camNormalPos.set(0, 0, R + Math.max(5.5, distToPanel));
       camNormalTarget.set(0, 0, R * 0.35);
       if (!doEntry) {
         camera.position.copy(camNormalPos);
