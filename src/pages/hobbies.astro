@@ -1,0 +1,146 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+
+const hobbies = [
+  {
+    tag: "Markets",
+    title: "Following markets",
+    note: "Investing passively since I was 8 through custodial accounts — and recently started learning options trading.",
+    big: true,
+  },
+  {
+    tag: "Reading",
+    title: "Nonfiction & essays",
+    note: "Economics, philosophy, and history. I'm obsessed with understanding how humans work.",
+  },
+  {
+    tag: "Running",
+    title: "Long runs & short sprints",
+    note: "Where most of the thinking actually happens.",
+  },
+  {
+    tag: "Training",
+    title: "Gym",
+    note: "10g of creatine and half a gallon of milk a day. Push–pull–legs, but legs are optional.",
+  },
+  {
+    tag: "Music",
+    title: "Music",
+    note: "A little bit of everything but country.",
+  },
+];
+---
+
+<Layout
+  title="Hobbies — Frank Niu"
+  description="What Frank Niu does outside the work."
+>
+  <section class="hp" id="hobbies" aria-labelledby="hp-heading">
+    <div class="container">
+      <header class="hp__head" data-reveal>
+        <p class="label">§ Hobbies — outside the work</p>
+        <h1 class="display hp__title" id="hp-heading">Outside the work.</h1>
+        <p class="hp__blurb">
+          The stuff that doesn't go on a résumé — and probably says more.
+        </p>
+      </header>
+
+      <ul class="hp__grid">
+        {
+          hobbies.map((h) => (
+            <li class={`hp__card${h.big ? " hp__card--big" : ""}`} data-reveal>
+              <span class="label hp__tag">{h.tag}</span>
+              <h2 class="hp__name">{h.title}</h2>
+              <p class="hp__note">{h.note}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+  <Footer />
+</Layout>
+
+<style>
+  .hp {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem) clamp(2rem, 1rem + 3vw, 4rem);
+  }
+  .hp__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    max-width: 32ch;
+    margin-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+  .hp__title {
+    font-size: var(--fs-display);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+  }
+  .hp__blurb {
+    color: var(--ink-dim);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+  }
+  .hp__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(0.75rem, 0.4rem + 1vw, 1.25rem);
+  }
+  .hp__card {
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 12rem;
+    padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--paper-raised);
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  }
+  .hp__card--big {
+    grid-column: span 6;
+    min-height: 9rem;
+  }
+  .hp__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -30px rgba(26, 23, 18, 0.5);
+  }
+  .hp__tag {
+    color: var(--accent);
+  }
+  .hp__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    margin-top: auto;
+  }
+  .hp__note {
+    color: var(--ink-dim);
+    font-size: var(--fs-small);
+  }
+
+  @media (max-width: 720px) {
+    .hp__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .hp__card,
+    .hp__card--big {
+      grid-column: span 2;
+    }
+  }
+  @media (max-width: 460px) {
+    .hp__grid {
+      grid-template-columns: 1fr;
+    }
+    .hp__card,
+    .hp__card--big {
+      grid-column: span 1;
+    }
+  }
+</style>

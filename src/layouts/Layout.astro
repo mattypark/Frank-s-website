@@ -1,0 +1,179 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Atmosphere from "../components/Atmosphere.astro";
+import CursorTexture from "../components/CursorTexture.astro";
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource/geist-sans/400.css";
+import "@fontsource/geist-sans/500.css";
+import "@fontsource-variable/geist-mono";
+import "../styles/tokens.css";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Frank Niu",
+  description = "Frank Niu — an 18-year-old from Texas working at the intersection of finance and AI. Founder of Axiom Pathways.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <Atmosphere transition:persist />
+    <CursorTexture transition:persist />
+
+    <header class="site-header" transition:persist>
+      <div class="site-header__inner container">
+        <a href="/" class="wordmark" aria-label="Frank Niu — home">Frank Niu</a>
+        <span class="site-clock mono" id="site-clock" aria-hidden="true">--:--:-- TX</span>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <script>
+      // ---- live Texas clock + scroll reveals, re-initialised on every
+      // View Transition navigation via the astro:page-load event ----
+      const tickClock = () => {
+        const el = document.getElementById("site-clock");
+        if (!el) return;
+        const t = new Date().toLocaleTimeString("en-US", {
+          hour12: false,
+          timeZone: "America/Chicago",
+        });
+        el.textContent = `${t} TX`;
+      };
+
+      let clockTimer: number | undefined;
+      const startClock = () => {
+        tickClock();
+        window.clearInterval(clockTimer);
+        clockTimer = window.setInterval(tickClock, 1000);
+      };
+
+      let revealObserver: IntersectionObserver | undefined;
+      const setupReveals = () => {
+        const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
+        if (!items.length) return;
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduce) {
+          items.forEach((el) => el.classList.add("is-visible"));
+          return;
+        }
+        revealObserver?.disconnect();
+        revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                revealObserver?.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+        );
+        items.forEach((el) => revealObserver!.observe(el));
+      };
+
+      const onPageLoad = () => {
+        startClock();
+        setupReveals();
+      };
+
+      document.addEventListener("astro:page-load", onPageLoad);
+    </script>
+
+    <style>
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: color-mix(in srgb, var(--paper) 82%, transparent);
+        backdrop-filter: saturate(1.1) blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      .site-header__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--sp-4);
+        height: 3.5rem;
+      }
+      .wordmark {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.85rem, 0.4rem + 1.5vw, 1.85rem);
+      }
+      .site-nav__link {
+        font-size: var(--fs-small);
+        color: var(--ink-dim);
+        position: relative;
+        transition: color var(--dur-fast) var(--ease-out);
+      }
+      .site-nav__link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 1px;
+        background: var(--ink);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--dur) var(--ease-out);
+      }
+      .site-nav__link:hover {
+        color: var(--ink);
+      }
+      .site-nav__link:hover::after {
+        transform: scaleX(1);
+      }
+      .site-clock {
+        font-size: var(--fs-micro);
+        color: var(--ink-faint);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.04em;
+        flex: none;
+      }
+      @media (max-width: 680px) {
+        .site-clock {
+          display: none;
+        }
+        .site-nav {
+          gap: 0.95rem;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+        }
+        .site-nav::-webkit-scrollbar {
+          display: none;
+        }
+        .site-nav__link {
+          font-size: 0.8125rem;
+          white-space: nowrap;
+        }
+      }
+    </style>
+  </body>
+</html>

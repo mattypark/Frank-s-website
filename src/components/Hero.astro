@@ -1,0 +1,350 @@
+---
+// Hero — lead with the thesis, not the name. Ambient shards drift behind the
+// type (canvas, device-safe); the heading reveals line-by-line on load.
+---
+
+<section class="hero" aria-labelledby="hero-heading">
+  <canvas class="hero__canvas" data-hero-canvas aria-hidden="true"></canvas>
+
+  <div class="container hero__inner">
+    <p class="label hero__eyebrow" data-reveal style="--reveal-delay: 0ms">
+      <span class="hero__star" aria-hidden="true">✸</span>
+      Frank Niu — Texas · Finance × AI × Civic life
+    </p>
+
+    <h1 class="display hero__heading" id="hero-heading">
+      <span class="hl"><span class="hl__i" style="--i: 0">Give teenagers real</span></span>
+      <span class="hl"
+        ><span class="hl__i" style="--i: 1"
+          >responsibility<span class="hero__dash"> — </span><span class="hero__accent">then</span></span
+        ></span
+      >
+      <span class="hl"
+        ><span class="hl__i" style="--i: 2"><span class="hero__accent">watch what they build.</span></span></span
+      >
+    </h1>
+
+    <div class="hero__grid">
+      <div class="hero__lead-col" data-reveal style="--reveal-delay: 420ms">
+        <p class="hero__lead">
+          I'm an 18-year-old from Texas. I started <strong>Axiom Pathways</strong>,
+          a nonprofit that places students inside real startups, and I spend my
+          time where finance, AI, and civic life overlap.
+        </p>
+        <a href="#story" class="hero__cue">
+          <span class="hero__cue-arrow" aria-hidden="true">↓</span>
+          <span>The story, from the beginning</span>
+        </a>
+      </div>
+
+      <figure class="hero__portrait" data-reveal style="--reveal-delay: 520ms">
+        <img
+          src="/frank.jpg"
+          alt="Frank Niu"
+          width="1200"
+          height="674"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <figcaption class="label hero__caption">Frank Niu — Texas</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(1.75rem, 1rem + 2.5vw, 3.25rem) clamp(2.5rem, 1rem + 5vw, 5rem);
+  }
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(0.4px);
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 0.8rem + 2vw, 2.25rem);
+  }
+  .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .hero__star {
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+  .hero__heading {
+    font-size: var(--fs-hero);
+    max-width: 20ch;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+  }
+  .hero__accent {
+    color: var(--ink-dim);
+  }
+  .hero__dash {
+    color: var(--accent);
+  }
+
+  /* line-mask reveal */
+  .hl {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.02em;
+  }
+  .hl__i {
+    display: block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hl__i {
+      transform: translateY(115%);
+      animation: line-rise 0.9s var(--ease-out) forwards;
+      animation-delay: calc(var(--i) * 95ms + 120ms);
+      will-change: transform;
+    }
+  }
+  @keyframes line-rise {
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+    gap: clamp(1.5rem, 1rem + 3vw, 4rem);
+    align-items: end;
+  }
+  .hero__lead-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-8);
+    max-width: 34ch;
+    padding-bottom: 0.4rem;
+  }
+  .hero__lead {
+    font-size: var(--fs-lead);
+    color: var(--ink-dim);
+    line-height: 1.5;
+  }
+  .hero__lead strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .hero__cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--ink);
+    width: fit-content;
+  }
+  .hero__cue-arrow {
+    display: inline-grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    transition: transform var(--dur) var(--ease-out), background var(--dur) var(--ease-out),
+      color var(--dur) var(--ease-out);
+  }
+  .hero__cue:hover .hero__cue-arrow {
+    transform: translateY(4px);
+    background: var(--ink);
+    color: var(--paper-raised);
+    border-color: var(--ink);
+  }
+  .hero__portrait {
+    position: relative;
+    margin: 0;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    padding: 0.55rem 0.55rem 2.4rem;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset,
+      0 18px 40px -28px rgba(26, 23, 18, 0.45);
+  }
+  .hero__portrait img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 674;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.02);
+    transition: filter var(--dur-slow) var(--ease-out);
+    border-radius: 2px;
+  }
+  .hero__portrait:hover img {
+    filter: grayscale(0) contrast(1);
+  }
+  .hero__caption {
+    position: absolute;
+    left: 0.7rem;
+    bottom: 0.85rem;
+  }
+
+  @media (max-width: 760px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .hero__portrait {
+      order: -1;
+      max-width: 26rem;
+    }
+  }
+</style>
+
+<script>
+  function initHeroShards() {
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-hero-canvas]");
+    if (!canvas || canvas.dataset.ready === "true") return;
+    canvas.dataset.ready = "true";
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const palette = [
+      [52, 74, 114], // ink blue
+      [120, 140, 165], // slate
+      [194, 187, 172], // warm sand
+      [126, 150, 138], // sage
+    ];
+
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    type Shard = {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      rot: number;
+      vr: number;
+      r: number;
+      sides: number;
+      col: number[];
+      a: number;
+    };
+    let shards: Shard[] = [];
+
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+    const build = () => {
+      const count = Math.min(16, Math.max(7, Math.round((w * h) / 90000)));
+      shards = Array.from({ length: count }, () => ({
+        x: rand(0, w),
+        y: rand(0, h),
+        vx: rand(-0.18, 0.18),
+        vy: rand(-0.14, 0.14),
+        rot: rand(0, Math.PI * 2),
+        vr: rand(-0.0016, 0.0016),
+        r: rand(40, 140),
+        sides: Math.random() < 0.5 ? 3 : 4,
+        col: palette[Math.floor(Math.random() * palette.length)],
+        a: rand(0.14, 0.34),
+      }));
+    };
+
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      w = rect.width;
+      h = rect.height;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (!shards.length) build();
+    };
+
+    const drawShard = (s: Shard) => {
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.rotate(s.rot);
+      ctx.beginPath();
+      for (let i = 0; i < s.sides; i++) {
+        const ang = (i / s.sides) * Math.PI * 2;
+        const px = Math.cos(ang) * s.r;
+        const py = Math.sin(ang) * s.r * 0.72;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      const [r, g, b] = s.col;
+      const grad = ctx.createLinearGradient(-s.r, -s.r, s.r, s.r);
+      grad.addColorStop(0, `rgba(${r},${g},${b},${s.a})`);
+      grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const render = () => {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of shards) drawShard(s);
+    };
+
+    const step = () => {
+      for (const s of shards) {
+        s.x += s.vx;
+        s.y += s.vy;
+        s.rot += s.vr;
+        const m = s.r;
+        if (s.x < -m) s.x = w + m;
+        if (s.x > w + m) s.x = -m;
+        if (s.y < -m) s.y = h + m;
+        if (s.y > h + m) s.y = -m;
+      }
+      render();
+    };
+
+    let raf = 0;
+    let running = false;
+    const loop = () => {
+      step();
+      raf = requestAnimationFrame(loop);
+    };
+    const start = () => {
+      if (running || reduce) return;
+      running = true;
+      loop();
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    resize();
+    window.addEventListener("resize", () => {
+      resize();
+      if (reduce || !running) render();
+    });
+
+    if (reduce) {
+      render(); // single static frame
+      return;
+    }
+
+    // only animate while the hero is on screen
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => (e.isIntersecting ? start() : stop())),
+      { threshold: 0 }
+    );
+    io.observe(canvas);
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stop() : start()
+    );
+  }
+
+  document.addEventListener("astro:page-load", initHeroShards);
+</script>

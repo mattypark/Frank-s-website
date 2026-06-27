@@ -1,0 +1,199 @@
+---
+// Work — a "currently" index. Axiom Pathways leads as a stat spotlight;
+// the rest read as a tight ledger of roles.
+const roles = [
+  {
+    index: "02",
+    role: "Director of Finance",
+    org: "Youth Civics Network",
+    note: "YCN aims to fix declining civics participation nationwide — a national curriculum that state leads adapt locally. Through grant writing, I helped define key features like translating context across languages and providing tech support for students in need, and raised $7,500 for the cause.",
+    tag: "Nonprofit",
+  },
+];
+---
+
+<section class="work" id="work" aria-labelledby="work-heading">
+  <div class="container">
+    <header class="work__head" data-reveal>
+      <p class="label">§ Currently — work &amp; building</p>
+      <h2 class="display work__title" id="work-heading">What I'm building, and where I work.</h2>
+    </header>
+
+    <article class="spotlight" data-reveal>
+      <div class="spotlight__main">
+        <p class="label spotlight__index">[01] Founder</p>
+        <h3 class="display spotlight__name">Axiom Pathways</h3>
+        <p class="spotlight__note">
+          My 501(c)(3) tackling the shift to a new, AI-shaped workforce through
+          AI literacy and marketing. We produce articles and videos, and pair
+          students with real internships at partnered startups.
+        </p>
+      </div>
+      <dl class="spotlight__stats">
+        <div class="stat">
+          <dt class="label">Startups</dt>
+          <dd class="mono stat__num">09</dd>
+        </div>
+        <div class="stat">
+          <dt class="label">Interested interns</dt>
+          <dd class="mono stat__num">330</dd>
+        </div>
+      </dl>
+    </article>
+
+    <ol class="work__list">
+      {
+        roles.map((r) => (
+          <li class="work__row" data-reveal>
+            <span class="mono work__idx">[{r.index}]</span>
+            <div class="work__role">
+              <h3 class="work__role-name">
+                {r.role} <span class="work__at">at</span> <strong>{r.org}</strong>
+              </h3>
+              <p class="work__note">{r.note}</p>
+            </div>
+            <span class="label work__tag">{r.tag}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .work {
+    padding-block: clamp(3rem, 2rem + 5vw, 6.5rem);
+    border-top: 1px solid var(--line);
+  }
+  .work__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    max-width: 24ch;
+    margin-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+  .work__title {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+  }
+
+  /* spotlight */
+  .spotlight {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 1rem + 3vw, 4rem);
+    align-items: end;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+  .spotlight__index {
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .spotlight__name {
+    font-size: var(--fs-display);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.85rem;
+  }
+  .spotlight__note {
+    color: var(--ink-dim);
+    max-width: 44ch;
+  }
+  .spotlight__stats {
+    display: flex;
+    gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+  .stat__num {
+    font-size: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .stat .label {
+    margin-bottom: 0.4rem;
+  }
+
+  /* role index */
+  .work__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .work__row {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    gap: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+    align-items: baseline;
+    padding: clamp(1.1rem, 0.8rem + 1vw, 1.6rem) 0.5rem;
+    border-top: 1px solid var(--line);
+    transition: padding-left var(--dur) var(--ease-out);
+  }
+  .work__row:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .work__row:hover {
+    padding-left: 1.25rem;
+  }
+  .work__idx {
+    color: var(--ink-faint);
+    font-size: var(--fs-small);
+    transition: color var(--dur) var(--ease-out);
+  }
+  .work__row:hover .work__idx {
+    color: var(--accent);
+  }
+  .work__role-name {
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    color: var(--ink-dim);
+  }
+  .work__role-name strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .work__at {
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+  .work__note {
+    color: var(--ink-dim);
+    font-size: var(--fs-small);
+    margin-top: 0.4rem;
+    max-width: 52ch;
+  }
+  .work__tag {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .spotlight {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+    .work__row {
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      grid-template-areas:
+        "idx role"
+        ".   tag";
+      gap: 0.5rem 1rem;
+    }
+    .work__idx {
+      grid-area: idx;
+    }
+    .work__role {
+      grid-area: role;
+    }
+    .work__tag {
+      grid-area: tag;
+      margin-top: 0.5rem;
+    }
+    .work__row:hover {
+      padding-left: 0.5rem;
+    }
+  }
+</style>

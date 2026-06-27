@@ -1,0 +1,240 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../../components/Footer.astro";
+
+const essays = (await getCollection("writing", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+---
+
+<Layout
+  title="Writing — Frank Niu"
+  description="Essays by Frank Niu — school papers and outside writing on finance, AI, and civic life."
+>
+  <section class="wr" id="writing">
+    <div class="container">
+      <header class="wr__head" data-reveal>
+        <p class="label">§ Writing — the portfolio</p>
+        <h1 class="display wr__title">Essays &amp; papers.</h1>
+        <p class="wr__intro">
+          Things I've written for class and on my own — mostly about finance,
+          AI, and what we owe the next set of teenagers.
+        </p>
+      </header>
+
+      <div class="wr__filter mono" role="group" aria-label="Filter essays" data-reveal>
+        <button class="wr__chip is-active" data-filter="all" aria-pressed="true">
+          All <span class="wr__count">{essays.length}</span>
+        </button>
+        <button class="wr__chip" data-filter="school" aria-pressed="false">
+          School <span class="wr__count">{essays.filter((e) => e.data.category === "school").length}</span>
+        </button>
+        <button class="wr__chip" data-filter="outside" aria-pressed="false">
+          Outside <span class="wr__count">{essays.filter((e) => e.data.category === "outside").length}</span>
+        </button>
+      </div>
+
+      <ol class="wr__list" data-wr-list>
+        {
+          essays.map((e, i) => (
+            <li class="wr__item" data-category={e.data.category} data-reveal style={`--reveal-delay: ${Math.min(i * 50, 300)}ms`}>
+              <a href={`/writing/${e.id}`} class="wr__link">
+                <span class="mono wr__date">{fmt(e.data.date)}</span>
+                <span class="wr__body">
+                  <span class="wr__name">{e.data.title}</span>
+                  {e.data.summary && <span class="wr__summary">{e.data.summary}</span>}
+                </span>
+                <span class="label wr__cat">{e.data.category}</span>
+                <span class="wr__go" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="wr__empty mono" data-wr-empty hidden>Nothing here yet.</p>
+    </div>
+  </section>
+  <Footer />
+</Layout>
+
+<style>
+  .wr {
+    padding-block: clamp(2.5rem, 1.5rem + 5vw, 5.5rem) clamp(2rem, 1rem + 3vw, 4rem);
+  }
+  .wr__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    max-width: 40ch;
+    margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem);
+  }
+  .wr__title {
+    font-size: var(--fs-display);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+  }
+  .wr__intro {
+    color: var(--ink-dim);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+  }
+  .wr__filter {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: clamp(1.5rem, 1rem + 1vw, 2rem);
+    flex-wrap: wrap;
+  }
+  .wr__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-micro);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    min-height: 36px;
+    transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .wr__chip:hover {
+    border-color: var(--ink);
+  }
+  .wr__chip.is-active {
+    background: var(--ink);
+    color: var(--paper-raised);
+    border-color: var(--ink);
+  }
+  .wr__count {
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wr__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .wr__item {
+    border-bottom: 1px solid var(--line);
+  }
+  .wr__link {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr) 6rem 1.5rem;
+    gap: clamp(0.75rem, 0.4rem + 1.5vw, 2rem);
+    align-items: baseline;
+    padding: clamp(1.1rem, 0.8rem + 1vw, 1.6rem) 0.5rem;
+    transition: padding-left var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+  }
+  .wr__link:hover {
+    padding-left: 1.25rem;
+    background: var(--paper-raised);
+  }
+  .wr__date {
+    font-size: var(--fs-small);
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .wr__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .wr__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .wr__summary {
+    color: var(--ink-dim);
+    font-size: var(--fs-small);
+    max-width: 56ch;
+  }
+  .wr__cat {
+    color: var(--ink-faint);
+  }
+  .wr__go {
+    color: var(--accent);
+    justify-self: end;
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .wr__link:hover .wr__go {
+    transform: translateX(4px);
+  }
+  .wr__empty {
+    color: var(--ink-faint);
+    padding: 2rem 0.5rem;
+  }
+
+  @media (max-width: 680px) {
+    .wr__link {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "date cat"
+        "body body"
+        "go   go";
+      gap: 0.5rem 1rem;
+    }
+    .wr__date {
+      grid-area: date;
+    }
+    .wr__cat {
+      grid-area: cat;
+      justify-self: end;
+    }
+    .wr__body {
+      grid-area: body;
+    }
+    .wr__go {
+      grid-area: go;
+      justify-self: start;
+    }
+    .wr__link:hover {
+      padding-left: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  function initWritingFilter() {
+    const list = document.querySelector<HTMLElement>("[data-wr-list]");
+    if (!list || list.dataset.ready === "true") return;
+    list.dataset.ready = "true";
+
+    const chips = document.querySelectorAll<HTMLButtonElement>(".wr__chip");
+    const items = list.querySelectorAll<HTMLElement>(".wr__item");
+    const empty = document.querySelector<HTMLElement>("[data-wr-empty]");
+
+    const apply = (filter: string) => {
+      let shown = 0;
+      items.forEach((item) => {
+        const match = filter === "all" || item.dataset.category === filter;
+        item.hidden = !match;
+        if (match) shown += 1;
+      });
+      if (empty) empty.hidden = shown !== 0;
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => {
+          c.classList.remove("is-active");
+          c.setAttribute("aria-pressed", "false");
+        });
+        chip.classList.add("is-active");
+        chip.setAttribute("aria-pressed", "true");
+        apply(chip.dataset.filter || "all");
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initWritingFilter);
+</script>

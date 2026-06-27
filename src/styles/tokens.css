@@ -1,0 +1,68 @@
+:root {
+  /* ---- palette : warm "paper & ink" — deliberately not cream+terracotta ---- */
+  --paper: #ece9e1;          /* warm bone ground */
+  --paper-raised: #f3f0e9;   /* lifted surface (cards, plates) */
+  --paper-sunken: #e3dfd5;   /* inset wells */
+  --ink: #1a1712;            /* warm near-black, primary text */
+  --ink-dim: #635d53;        /* secondary text */
+  --ink-faint: #9c9588;      /* metadata, captions */
+  --line: #d3cdc1;           /* hairlines / dividers */
+  --line-strong: #c2bbac;
+
+  /* inverted surface — the terminal keeps its dark identity */
+  --term-bg: #15120d;
+  --term-fg: #ece6da;
+  --term-dim: #8a8275;
+  --term-line: #2c281f;
+
+  /* one restrained accent — ink-blue, archival not techy. used sparingly. */
+  --accent: #344a72;
+  --accent-soft: #51648a;
+
+  /* ---- type ---- */
+  --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", Georgia, serif;
+  --font-sans: "Geist Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, "SF Mono", monospace;
+
+  /* fluid type scale */
+  --fs-hero: clamp(2.6rem, 1rem + 6.4vw, 6rem);
+  --fs-display: clamp(2rem, 1rem + 3.6vw, 3.85rem);
+  --fs-h2: clamp(1.6rem, 1.1rem + 2vw, 2.75rem);
+  --fs-h3: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
+  --fs-lead: clamp(1.12rem, 1rem + 0.6vw, 1.45rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --fs-small: 0.875rem;
+  --fs-micro: 0.75rem;
+
+  --lh-tight: 1.04;
+  --lh-snug: 1.22;
+  --lh-body: 1.62;
+
+  --tracking-label: 0.16em;
+
+  /* ---- spacing : 4px base ---- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-24: 6rem;
+  --sp-32: 8rem;
+
+  --page-pad: clamp(1.25rem, 0.6rem + 3vw, 4rem);
+  --maxw: 1280px;
+  --maxw-read: 42rem;
+
+  --radius: 4px;
+  --radius-lg: 10px;
+
+  /* ---- motion ---- */
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 720ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);   /* expo-out feel */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+}

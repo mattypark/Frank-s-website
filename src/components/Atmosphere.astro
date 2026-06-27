@@ -1,0 +1,167 @@
+---
+// Global atmosphere: film grain + an "artboard" frame with corner registration
+// marks and a live instrument readout (current section + scroll position).
+// Decorative only — aria-hidden, pointer-events: none.
+---
+
+<div class="atmos" aria-hidden="true">
+  <div class="atmos__grain"></div>
+
+  <div class="frame">
+    <span class="frame__mark frame__mark--tl"></span>
+    <span class="frame__mark frame__mark--tr"></span>
+    <span class="frame__mark frame__mark--bl"></span>
+    <span class="frame__mark frame__mark--br"></span>
+  </div>
+
+  <div class="readout mono">
+    <span class="readout__item readout__section" data-readout-section>Index</span>
+    <span class="readout__item readout__pos"><span data-readout-pos>000</span> / 100</span>
+  </div>
+</div>
+
+<style>
+  .atmos {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+  }
+
+  /* ---- film grain ---- */
+  .atmos__grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 180px 180px;
+  }
+
+  /* ---- artboard corner marks ---- */
+  .frame__mark {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+  }
+  .frame__mark::before,
+  .frame__mark::after {
+    content: "";
+    position: absolute;
+    background: var(--ink);
+    opacity: 0.55;
+  }
+  .frame__mark::before {
+    width: 100%;
+    height: 1px;
+    top: 0;
+  }
+  .frame__mark::after {
+    width: 1px;
+    height: 100%;
+    left: 0;
+  }
+  .frame__mark--tl {
+    top: 16px;
+    left: 16px;
+  }
+  .frame__mark--tr {
+    top: 16px;
+    right: 16px;
+    transform: scaleX(-1);
+  }
+  .frame__mark--bl {
+    bottom: 16px;
+    left: 16px;
+    transform: scaleY(-1);
+  }
+  .frame__mark--br {
+    bottom: 16px;
+    right: 16px;
+    transform: scale(-1);
+  }
+
+  /* ---- instrument readout (bottom) ---- */
+  .readout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 34px;
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .readout__pos {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 640px) {
+    .readout {
+      padding-inline: 30px;
+      font-size: 0.5625rem;
+    }
+    .frame__mark--tl,
+    .frame__mark--tr {
+      top: 12px;
+    }
+  }
+</style>
+
+<script>
+  function initReadout() {
+    const sectionEl = document.querySelector<HTMLElement>("[data-readout-section]");
+    const posEl = document.querySelector<HTMLElement>("[data-readout-pos]");
+    if (!sectionEl || !posEl) return;
+    if (document.body.dataset.readoutReady === "true") return;
+    document.body.dataset.readoutReady = "true";
+
+    const labels: Record<string, string> = {
+      story: "Story",
+      work: "Work",
+      writing: "Writing",
+      values: "Values",
+      hobbies: "Hobbies",
+      explore: "Explore",
+      terminal: "Terminal",
+      contact: "Contact",
+    };
+    const labelFor = (id: string) => labels[id] ?? "Index";
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.round((window.scrollY / max) * 100) : 0;
+      posEl.textContent = String(pct).padStart(3, "0");
+
+      // which titled section is nearest the upper third of the viewport
+      const probe = window.innerHeight * 0.34;
+      let current = "index";
+      document.querySelectorAll<HTMLElement>("section[id]").forEach((s) => {
+        const top = s.getBoundingClientRect().top;
+        if (top <= probe) current = s.id;
+      });
+      const label = labelFor(current);
+      if (sectionEl.textContent !== label) sectionEl.textContent = label;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  }
+
+  // Atmosphere is persisted across page transitions, so bind listeners once;
+  // the scroll handler re-queries sections live, adapting to each page.
+  document.addEventListener("astro:page-load", initReadout);
+</script>

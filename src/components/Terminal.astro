@@ -1,0 +1,444 @@
+---
+const EMAIL = "frank.z.niu@gmail.com";
+---
+
+<section class="termsec" id="terminal" aria-labelledby="term-heading">
+  <div class="container">
+    <header class="termsec__head" data-reveal>
+      <p class="label">§ Ask — an interactive terminal</p>
+      <h2 class="display termsec__title" id="term-heading">
+        Or just talk to the machine.
+      </h2>
+      <p class="termsec__sub">Type a command, or tap one below.</p>
+    </header>
+
+    <div class="terminal" data-reveal data-email={EMAIL}>
+      <div class="terminal__bar mono" aria-hidden="true">
+        <span class="terminal__dots"><i></i><i></i><i></i></span>
+        <span class="terminal__name">frank.sh — ask anything</span>
+        <span class="terminal__hint">? for help</span>
+      </div>
+
+      <div class="terminal__body" data-term-body>
+        <div class="terminal__output mono" data-term-output aria-live="polite"></div>
+        <form class="terminal__form mono" data-term-form autocomplete="off">
+          <label class="visually-hidden" for="term-input">Type a command</label>
+          <span class="terminal__prompt" aria-hidden="true">&gt;</span>
+          <input
+            class="terminal__input"
+            id="term-input"
+            name="command"
+            type="text"
+            placeholder="?"
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="off"
+          />
+        </form>
+      </div>
+
+      <p class="terminal__chips mono">
+        <button class="chip" data-cmd="?">?</button>
+        <button class="chip" data-cmd="story">story</button>
+        <button class="chip" data-cmd="building">building</button>
+        <button class="chip" data-cmd="message">message</button>
+        <button class="chip" data-cmd="contact">contact</button>
+        <button class="chip" data-cmd="clear">clear</button>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .termsec {
+    padding-block: clamp(3rem, 2rem + 5vw, 6.5rem) clamp(2rem, 1rem + 4vw, 4.5rem);
+    border-top: 1px solid var(--line);
+  }
+  .termsec__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--sp-4);
+    margin: 0 auto clamp(1.75rem, 1rem + 2vw, 2.75rem);
+    max-width: 34ch;
+  }
+  .termsec__title {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+  }
+  .termsec__sub {
+    color: var(--ink-dim);
+    font-size: var(--fs-small);
+  }
+
+  .terminal {
+    background: var(--term-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid #000;
+    overflow: hidden;
+    max-width: 46rem;
+    margin-inline: auto;
+    box-shadow: 0 30px 60px -40px rgba(21, 18, 13, 0.7);
+  }
+  .terminal__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--term-line);
+    font-size: var(--fs-micro);
+    color: var(--term-dim);
+  }
+  .terminal__dots {
+    display: inline-flex;
+    gap: 0.4rem;
+  }
+  .terminal__dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--term-line);
+  }
+  .terminal__name {
+    color: var(--term-fg);
+  }
+  .terminal__hint {
+    margin-left: auto;
+  }
+
+  .terminal__body {
+    padding: 1.1rem 1.2rem;
+    min-height: 15rem;
+    max-height: 24rem;
+    overflow-y: auto;
+    cursor: text;
+    display: flex;
+    flex-direction: column;
+  }
+  .terminal__output {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--term-fg);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .terminal__output :global(.out-cmd) {
+    color: var(--term-fg);
+  }
+  .terminal__output :global(.out-cmd)::before {
+    content: "";
+  }
+  .terminal__output :global(.out-title) {
+    color: var(--accent-soft);
+    margin-top: 0.5rem;
+  }
+  .terminal__output :global(.out-text) {
+    color: var(--term-dim);
+  }
+  .terminal__output :global(.out-text a) {
+    color: var(--term-fg);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .terminal__form {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+  }
+  .terminal__prompt {
+    color: var(--accent-soft);
+    font-size: 0.875rem;
+  }
+  .terminal__input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--term-fg);
+    font-family: var(--font-mono);
+    font-size: 16px; /* keep >=16px so mobile Safari doesn't auto-zoom */
+    caret-color: var(--accent-soft);
+  }
+
+  .terminal__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.9rem 1.2rem 1.1rem;
+    border-top: 1px solid var(--term-line);
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--term-dim);
+    border: 1px solid var(--term-line);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    min-height: 32px;
+    transition: color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  }
+  .chip:hover {
+    color: var(--term-bg);
+    background: var(--term-fg);
+    border-color: var(--term-fg);
+  }
+
+  /* tap-only on phones: hide the text-entry row, chips drive everything */
+  @media (max-width: 640px) {
+    .terminal__form {
+      display: none;
+    }
+    .terminal__body {
+      min-height: 11rem;
+    }
+    /* comfortable touch targets for the chips that now drive everything */
+    .chip {
+      min-height: 44px;
+      padding: 0.55rem 1rem;
+      font-size: 0.8125rem;
+    }
+    .terminal__chips {
+      gap: 0.6rem;
+    }
+  }
+</style>
+
+<script>
+  type CmdEntry = { title: string; body: string[] };
+
+  const COMMANDS: Record<string, CmdEntry> = {
+    "?": {
+      title: "available commands",
+      body: [
+        "story    — the short version (full timeline is up the page)",
+        "building — what I'm building right now",
+        "message  — send me a message, goes straight to me",
+        "contact  — how to reach me",
+        "clear    — wipe the screen",
+        "",
+        "type any word above and hit enter — or tap a chip.",
+      ],
+    },
+    story: {
+      title: "the short story",
+      body: [
+        "18, from Texas. Got pulled into finance early, then AI.",
+        "Started Axiom Pathways to put students inside real startups.",
+        "",
+        "the full timeline — birth to now — is up the page.",
+      ],
+    },
+    building: {
+      title: "what I'm building",
+      body: [
+        "Axiom Pathways — pairing student chapters with real startups.",
+        "5 startups, 58 interns placed so far.",
+        "",
+        "the bet: give teenagers real responsibility, and they build",
+        "things that matter.",
+      ],
+    },
+    contact: {
+      title: "reach me",
+      body: ["linkedin — /in/frank-niu-55054a290", "email    — frank.z.niu@gmail.com"],
+    },
+  };
+
+  const FALLBACK = (cmd: string) => [
+    `command not found: ${cmd}`,
+    'type "?" to see what I answer.',
+  ];
+
+  // Google Apps Script web app — messages land in Frank's sheet.
+  const MESSAGE_ENDPOINT =
+    "https://script.google.com/macros/s/AKfycbyj0usHWcAgpDDNeTLz6VmKFZsNZtqswhMphH0SYa7qH1_DYzfN_gSKme9rPLHv3z1h/exec";
+
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const TYPE_MS = 12;
+
+  function initTerminal() {
+    const root = document.querySelector<HTMLElement>(".terminal");
+    if (!root || root.dataset.ready === "true") return;
+    root.dataset.ready = "true";
+
+    const email = root.dataset.email || "";
+    const output = root.querySelector<HTMLElement>("[data-term-output]")!;
+    const form = root.querySelector<HTMLFormElement>("[data-term-form]")!;
+    const input = root.querySelector<HTMLInputElement>("#term-input")!;
+    const body = root.querySelector<HTMLElement>("[data-term-body]")!;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const tapOnly = () => !form.offsetParent; // form hidden via CSS on mobile
+
+    const scrollDown = () => (body.scrollTop = body.scrollHeight);
+
+    const appendLine = (text: string, cls: string, html = false) => {
+      const line = document.createElement("div");
+      line.className = cls;
+      if (html) line.innerHTML = text;
+      else line.textContent = text;
+      output.appendChild(line);
+      scrollDown();
+      return line;
+    };
+
+    const typeLines = (lines: string[], cls: string): Promise<void> => {
+      if (reduce) {
+        lines.forEach((t) => appendLine(t, cls));
+        return Promise.resolve();
+      }
+      return lines.reduce(
+        (chain, text) =>
+          chain.then(
+            () =>
+              new Promise<void>((resolve) => {
+                const line = appendLine("", cls);
+                let i = 0;
+                const tick = () => {
+                  i += 1;
+                  line.textContent = text.slice(0, i);
+                  scrollDown();
+                  if (i < text.length) {
+                    window.setTimeout(tick, TYPE_MS);
+                  } else {
+                    resolve();
+                  }
+                };
+                if (text.length === 0) resolve();
+                else tick();
+              })
+          ),
+        Promise.resolve()
+      );
+    };
+
+    let isTyping = false;
+    let messageFlow: { step: string; name: string; email: string } | null = null;
+
+    const endFlow = () => {
+      messageFlow = null;
+      input.placeholder = "?";
+    };
+
+    const sendMessage = async (p: { name: string; email: string; message: string }) => {
+      try {
+        await fetch(MESSAGE_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(p),
+        });
+        await typeLines([`sent. frank will actually read this. thanks, ${p.name} :)`], "out-text");
+      } catch {
+        await typeLines(["hm, that didn't send. try again in a bit?"], "out-text");
+      }
+    };
+
+    const handleStep = async (text: string) => {
+      appendLine(`> ${text}`, "out-cmd");
+      if (text.toLowerCase() === "cancel") {
+        endFlow();
+        await typeLines(["message cancelled."], "out-text");
+        appendLine("", "out-text");
+        return;
+      }
+      isTyping = true;
+      if (messageFlow!.step === "name") {
+        messageFlow!.name = text;
+        messageFlow!.step = "email";
+        await typeLines([`hey ${text}. what's your email?`], "out-text");
+        input.placeholder = "you@example.com";
+      } else if (messageFlow!.step === "email") {
+        if (!EMAIL_PATTERN.test(text)) {
+          await typeLines(["that doesn't look like an email — try again?"], "out-text");
+        } else {
+          messageFlow!.email = text;
+          messageFlow!.step = "message";
+          await typeLines(["got it. what's the message?"], "out-text");
+          input.placeholder = "your message...";
+        }
+      } else {
+        const payload = { name: messageFlow!.name, email: messageFlow!.email, message: text };
+        endFlow();
+        await sendMessage(payload);
+        appendLine("", "out-text");
+      }
+      isTyping = false;
+      input.focus();
+    };
+
+    const startMessage = async () => {
+      // tap-only (mobile): no typed flow — hand off to the mail client
+      if (tapOnly()) {
+        appendLine("── send frank a message ──", "out-title");
+        appendLine(
+          `tap to email me → <a href="mailto:${email}">${email}</a>`,
+          "out-text",
+          true
+        );
+        appendLine("", "out-text");
+        return;
+      }
+      isTyping = true;
+      appendLine("── send frank a message ──", "out-title");
+      await typeLines(
+        [
+          "three quick questions, then it lands in frank's inbox.",
+          'type "cancel" anytime to back out.',
+          "",
+          "what's your name?",
+        ],
+        "out-text"
+      );
+      isTyping = false;
+      messageFlow = { step: "name", name: "", email: "" };
+      input.placeholder = "your name...";
+      input.focus();
+    };
+
+    const run = async (raw: string) => {
+      const text = raw.trim();
+      if (!text || isTyping) return;
+      if (messageFlow) return void handleStep(text);
+
+      const cmd = text.toLowerCase();
+      appendLine(`> ${cmd}`, "out-cmd");
+
+      if (cmd === "clear") return void output.replaceChildren();
+      if (cmd === "message") return void startMessage();
+
+      isTyping = true;
+      const entry = COMMANDS[cmd];
+      if (entry) {
+        appendLine(`── ${entry.title} ──`, "out-title");
+        await typeLines(entry.body, "out-text");
+      } else {
+        await typeLines(FALLBACK(cmd), "out-text");
+      }
+      appendLine("", "out-text");
+      isTyping = false;
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      run(input.value);
+      input.value = "";
+    });
+    body.addEventListener("click", () => {
+      if (!tapOnly()) input.focus();
+    });
+    root.querySelectorAll<HTMLButtonElement>(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        run(chip.dataset.cmd || "");
+        if (!tapOnly()) input.focus();
+      });
+    });
+
+    typeLines(['frank.sh booted. type "?" to start.'], "out-text");
+  }
+
+  document.addEventListener("astro:page-load", initTerminal);
+</script>

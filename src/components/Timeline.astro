@@ -1,0 +1,458 @@
+---
+// Story timeline — a horizontal "life ledger" from birth to now, mixing
+// personal and professional. `kind` is "life" or "work"; `detail` adds an
+// expandable "More".
+const events = [
+  {
+    year: "2008",
+    title: "Born in Shanghai, China",
+    note: "Where it started.",
+    kind: "life",
+  },
+  {
+    year: "2014",
+    title: "Moved to Vancouver, Canada",
+    note: "The groundwork for learning English — a slow, difficult start. I picked up the alphabet, but academics was a huge struggle.",
+    kind: "life",
+  },
+  {
+    year: "Dec 2015",
+    title: "Moved to Houston, Texas",
+    note: "The longest road trip of my life — a different motel every morning, excited to see whether breakfast was waffles or cereal.",
+    kind: "life",
+  },
+  {
+    year: "Feb 2016",
+    title: "First day, first grade",
+    note: "Confused about why I got so much candy — an ironic prelude to the pain ahead: culture shock, language barriers, and an ESL teacher who spoke Spanish.",
+    kind: "life",
+  },
+  {
+    year: "2017",
+    title: "Lightbulb moment",
+    note: "Reading a “My Weird School” book, almost every word suddenly had meaning. After that, everything began to make sense.",
+    detail:
+      "I'd spent every night listening to the same stories my dad downloaded on a speaker, and most of 2nd grade on the most basic picture books.",
+    kind: "life",
+  },
+  {
+    year: "2022",
+    title: "First taste of building",
+    note: "Discovered LEGO and got obsessed — every YouTube video, the most technical sets. I still see that kid when I set objectives for the nonprofit today.",
+    kind: "life",
+  },
+  {
+    year: "2023",
+    title: "High school begins",
+    note: "Kerr High was transformative. Its self-paced, accelerated model kept me grounded — and Mr. Khoo's Biology prepared me for every class after.",
+    kind: "life",
+  },
+  {
+    year: "Jan 2024",
+    title: "The slump",
+    note: "Burnt out all year. My ambitions were waning, and safety nets like the local state school started to feel comforting.",
+    kind: "life",
+  },
+  {
+    year: "Dec 2025",
+    title: "Recovery",
+    note: "I found role models in my community who showed me things were possible. I began to believe in my ability to chase my ambitions again.",
+    kind: "life",
+  },
+  {
+    year: "Feb 2026",
+    title: "Synthica growth intern",
+    note: "Joined an online research org as a marketer. My first post hit 400 people day one; my third reached 130,000 views.",
+    detail:
+      "That was the game changer — I became obsessed with understanding the algorithm and what makes a good post.",
+    kind: "work",
+  },
+  {
+    year: "Mar 2026",
+    title: "The fourth post",
+    note: "A LinkedIn post about the Stanford program I got into reached ~50,000 views — and became how partners knew of me. I met my co-founder through it.",
+    kind: "work",
+  },
+  {
+    year: "Apr 2026",
+    title: "Axiom is born",
+    note: "My co-founder had a “stealth nonprofit” idea that needed polishing. For low-income, high-achieving students, the safety net leads many astray from their real passions.",
+    detail:
+      "We were both into entrepreneurship — and who takes more risks to make ideas happen than startups? The core model of Axiom Pathways was born.",
+    kind: "work",
+  },
+  {
+    year: "Jun 2026",
+    title: "The progress",
+    note: "300 applications worldwide (Yale and Stanford included), 9 partnered startups, and early interest from Microsoft. Let's see where it goes.",
+    kind: "work",
+  },
+];
+---
+
+<section class="story" id="story" aria-labelledby="story-heading">
+  <div class="container story__head">
+    <div class="story__head-text" data-reveal>
+      <p class="label">§ Story — since the beginning</p>
+      <h2 class="display story__title" id="story-heading">A life, in order.</h2>
+    </div>
+    <div class="story__controls" data-reveal>
+      <div class="story__progress" aria-hidden="true">
+        <span class="story__progress-num mono" data-tl-percent>0%</span>
+        <span class="story__progress-track"><span class="story__progress-bar" data-tl-bar></span></span>
+      </div>
+      <div class="story__buttons">
+        <button class="story__btn" data-tl-prev aria-label="Previous events">←</button>
+        <button class="story__btn" data-tl-next aria-label="Next events">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="story__scroller" data-tl-scroller tabindex="0" role="region" aria-label="Timeline, scroll horizontally">
+    <ol class="story__track" data-tl-track>
+      {
+        events.map((e) => (
+          <li class="tl-card" data-kind={e.kind}>
+            <div class="tl-card__tick" aria-hidden="true" />
+            <p class="tl-card__year mono">{e.year}</p>
+            <h3 class="tl-card__title">{e.title}</h3>
+            <p class="tl-card__note">{e.note}</p>
+            {e.detail && (
+              <>
+                <button class="tl-card__more mono" aria-expanded="false" data-tl-more>
+                  <span class="tl-card__more-label">More</span>
+                </button>
+                <p class="tl-card__detail" data-tl-detail hidden>
+                  {e.detail}
+                </p>
+              </>
+            )}
+            <span class="label tl-card__kind">{e.kind === "work" ? "Work" : "Life"}</span>
+          </li>
+        ))
+      }
+      <li class="tl-end" aria-hidden="true">
+        <span class="mono">↦</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .story {
+    padding-block: clamp(3rem, 2rem + 5vw, 6.5rem);
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .story__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    flex-wrap: wrap;
+    margin-bottom: clamp(1.75rem, 1rem + 2vw, 3rem);
+  }
+  .story__head-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  .story__title {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+  }
+  .story__controls {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 0.5rem + 2vw, 2rem);
+  }
+  .story__progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .story__progress-num {
+    font-size: var(--fs-micro);
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    min-width: 2.6em;
+  }
+  .story__progress-track {
+    display: block;
+    width: clamp(60px, 14vw, 140px);
+    height: 2px;
+    background: var(--line-strong);
+    position: relative;
+    overflow: hidden;
+  }
+  .story__progress-bar {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 80ms linear;
+  }
+  .story__buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .story__btn {
+    width: 2.6rem;
+    height: 2.6rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    color: var(--ink);
+    transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out);
+  }
+  .story__btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--paper-raised);
+    border-color: var(--ink);
+  }
+  .story__btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  /* scroller */
+  .story__scroller {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    cursor: grab;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .story__scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .story__scroller.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+  .story__scroller:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .story__track {
+    list-style: none;
+    margin: 0;
+    padding: 1.75rem var(--page-pad) 0.5rem;
+    display: flex;
+    gap: clamp(0.75rem, 0.4rem + 1vw, 1.25rem);
+    align-items: stretch;
+    position: relative;
+    width: max-content;
+  }
+  /* the ledger line running behind the year ticks */
+  .story__track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 1.75rem;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .tl-card {
+    scroll-snap-align: start;
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(15rem, 70vw, 19rem);
+    padding-top: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-right: 1px solid transparent;
+  }
+  .tl-card__tick {
+    position: absolute;
+    top: calc(-0.35rem);
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--ink-faint);
+    transition: background var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out),
+      transform var(--dur) var(--ease-out);
+  }
+  .tl-card[data-kind="work"] .tl-card__tick {
+    border-color: var(--accent);
+  }
+  .tl-card:hover .tl-card__tick {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.25);
+  }
+  .tl-card__year {
+    font-size: var(--fs-small);
+    color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+  .tl-card[data-kind="work"] .tl-card__year {
+    color: var(--accent);
+  }
+  .tl-card__title {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+  }
+  .tl-card__note {
+    color: var(--ink-dim);
+    font-size: var(--fs-small);
+  }
+  .tl-card__more {
+    align-self: flex-start;
+    margin-top: 0.2rem;
+    font-size: var(--fs-micro);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .tl-card__more::before {
+    content: "+";
+    font-size: 1em;
+  }
+  .tl-card__more[aria-expanded="true"]::before {
+    content: "−";
+  }
+  .tl-card__detail {
+    color: var(--ink-dim);
+    font-size: var(--fs-small);
+    border-left: 2px solid var(--line-strong);
+    padding-left: 0.85rem;
+    margin-top: 0.2rem;
+  }
+  .tl-card__kind {
+    margin-top: auto;
+    padding-top: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  .tl-end {
+    flex: 0 0 auto;
+    width: 4rem;
+    display: grid;
+    place-items: center;
+    color: var(--ink-faint);
+    font-size: 1.5rem;
+    padding-top: 1.4rem;
+  }
+
+  @media (hover: none) {
+    .story__scroller {
+      scroll-snap-type: x mandatory;
+    }
+  }
+</style>
+
+<script>
+  function initTimeline() {
+    const scroller = document.querySelector<HTMLElement>("[data-tl-scroller]");
+    if (!scroller || scroller.dataset.ready === "true") return;
+    scroller.dataset.ready = "true";
+
+    const bar = document.querySelector<HTMLElement>("[data-tl-bar]");
+    const percent = document.querySelector<HTMLElement>("[data-tl-percent]");
+    const prev = document.querySelector<HTMLButtonElement>("[data-tl-prev]");
+    const next = document.querySelector<HTMLButtonElement>("[data-tl-next]");
+
+    const maxScroll = () => scroller.scrollWidth - scroller.clientWidth;
+
+    const updateProgress = () => {
+      const max = maxScroll();
+      const ratio = max > 0 ? scroller.scrollLeft / max : 0;
+      if (bar) bar.style.transform = `scaleX(${ratio})`;
+      if (percent) percent.textContent = `${Math.round(ratio * 100)}%`;
+      if (prev) prev.disabled = scroller.scrollLeft <= 1;
+      if (next) next.disabled = scroller.scrollLeft >= max - 1;
+    };
+
+    const step = () => Math.max(scroller.clientWidth * 0.8, 240);
+    prev?.addEventListener("click", () =>
+      scroller.scrollBy({ left: -step(), behavior: "smooth" })
+    );
+    next?.addEventListener("click", () =>
+      scroller.scrollBy({ left: step(), behavior: "smooth" })
+    );
+
+    scroller.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+
+    // pointer drag-to-scroll (desktop nicety; touch already scrolls natively)
+    let down = false;
+    let startX = 0;
+    let startLeft = 0;
+    let moved = false;
+
+    scroller.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "touch") return;
+      down = true;
+      moved = false;
+      startX = e.clientX;
+      startLeft = scroller.scrollLeft;
+      scroller.classList.add("is-dragging");
+    });
+    scroller.addEventListener("pointermove", (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) moved = true;
+      scroller.scrollLeft = startLeft - dx;
+    });
+    const endDrag = () => {
+      down = false;
+      scroller.classList.remove("is-dragging");
+    };
+    scroller.addEventListener("pointerup", endDrag);
+    scroller.addEventListener("pointerleave", endDrag);
+    // swallow click after a drag so a "More" button isn't accidentally toggled
+    scroller.addEventListener(
+      "click",
+      (e) => {
+        if (moved) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      true
+    );
+
+    // expand / collapse detail cards
+    scroller.querySelectorAll<HTMLButtonElement>("[data-tl-more]").forEach((btn) => {
+      const detail = btn.parentElement?.querySelector<HTMLElement>("[data-tl-detail]");
+      const label = btn.querySelector(".tl-card__more-label");
+      if (!detail) return;
+      btn.addEventListener("click", () => {
+        const open = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!open));
+        detail.hidden = open;
+        if (label) label.textContent = open ? "More" : "Less";
+      });
+    });
+
+    // keyboard: arrow keys scroll the focused region
+    scroller.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") {
+        scroller.scrollBy({ left: step(), behavior: "smooth" });
+      } else if (e.key === "ArrowLeft") {
+        scroller.scrollBy({ left: -step(), behavior: "smooth" });
+      }
+    });
+
+    updateProgress();
+  }
+
+  document.addEventListener("astro:page-load", initTimeline);
+</script>

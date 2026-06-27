@@ -1,0 +1,87 @@
+---
+const year = new Date().getFullYear();
+// Update these two when the real handles are ready.
+const LINKEDIN = "https://www.linkedin.com/in/frank-niu-55054a290/";
+const EMAIL = "frank.z.niu@gmail.com";
+---
+
+<footer class="footer" id="contact">
+  <div class="container footer__inner">
+    <p class="display footer__line" data-reveal>
+      Let's talk.
+    </p>
+
+    <ul class="footer__links" data-reveal>
+      <li>
+        <a class="footer__link" href={LINKEDIN} target="_blank" rel="noopener">
+          <span>LinkedIn</span>
+          <span class="footer__arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li>
+        <a class="footer__link" href={`mailto:${EMAIL}`}>
+          <span>Email</span>
+          <span class="footer__arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="footer__colophon label">
+      <span>Frank Niu</span>
+      <span>Texas, USA</span>
+      <span>© {year}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(3rem, 2rem + 5vw, 6rem) clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  }
+  .footer__line {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+  }
+  .footer__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  }
+  .footer__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+    font-weight: 600;
+    color: var(--ink-dim);
+    transition: color var(--dur) var(--ease-out);
+  }
+  .footer__link:hover {
+    color: var(--ink);
+  }
+  .footer__arrow {
+    font-size: 0.7em;
+    color: var(--accent);
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .footer__link:hover .footer__arrow {
+    transform: translate(3px, -3px);
+  }
+  .footer__colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding-top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border-top: 1px solid var(--line);
+  }
+</style>

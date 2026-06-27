@@ -1,0 +1,135 @@
+---
+// A subtle grain texture brushed into the beige as the cursor moves — like
+// disturbing paper fibers, leaving a soft fading smudge. Sits BEHIND content
+// (z-index: -1, over the <html> paper background). Desktop / fine-pointer only,
+// disabled under prefers-reduced-motion.
+---
+
+<canvas class="ctex" data-ctex aria-hidden="true"></canvas>
+
+<style>
+  .ctex {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+  @media (hover: none), (pointer: coarse) {
+    .ctex {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initCursorTexture() {
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-ctex]");
+    if (!canvas || canvas.dataset.ready === "true") return;
+
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!fine || reduce) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    canvas.dataset.ready = "true";
+
+    // ---- a small noise tile reused as a repeating pattern ----
+    const tile = document.createElement("canvas");
+    tile.width = tile.height = 96;
+    const tctx = tile.getContext("2d")!;
+    const img = tctx.createImageData(96, 96);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = Math.random() * 255;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+      img.data[i + 3] = Math.random() * 90; // sparse fibers
+    }
+    tctx.putImageData(img, 0, 0);
+    const pattern = ctx.createPattern(tile, "repeat")!;
+
+    let w = 0;
+    let h = 0;
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const mouse = { x: -999, y: -999 };
+    const pen = { x: -999, y: -999 }; // lags behind the cursor, then catches up
+    let penInit = false;
+    let lastX = -999;
+    let lastY = -999;
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      },
+      { passive: true }
+    );
+
+    const R = 46; // smudge radius
+    // a warm tone slightly darker than the paper, so the grain "lifts" subtly
+    const drawBlob = (x: number, y: number) => {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, R);
+      g.addColorStop(0, "rgba(70,60,44,0.07)");
+      g.addColorStop(1, "rgba(70,60,44,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, R, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, R * 0.82, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.globalAlpha = 0.07;
+      ctx.fillStyle = pattern;
+      ctx.fillRect(x - R, y - R, R * 2, R * 2);
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    };
+
+    const frame = () => {
+      // fade existing texture back toward transparent
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "rgba(0,0,0,0.045)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "source-over";
+
+      if (mouse.x > -900) {
+        if (!penInit) {
+          pen.x = lastX = mouse.x;
+          pen.y = lastY = mouse.y;
+          penInit = true;
+        }
+        // the brush trails the cursor and eases in to catch up
+        pen.x += (mouse.x - pen.x) * 0.15;
+        pen.y += (mouse.y - pen.y) * 0.15;
+        const dx = pen.x - lastX;
+        const dy = pen.y - lastY;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 0.4) {
+          const steps = Math.max(1, Math.floor(dist / 7));
+          for (let s = 1; s <= steps; s++) {
+            drawBlob(lastX + (dx * s) / steps, lastY + (dy * s) / steps);
+          }
+          lastX = pen.x;
+          lastY = pen.y;
+        }
+      }
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener("astro:page-load", initCursorTexture);
+</script>

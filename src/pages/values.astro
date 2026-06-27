@@ -1,0 +1,114 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+
+const values = [
+  {
+    n: "01",
+    title: "Commitment",
+    body: "Being able to trust someone's word means the world to me. On the surface it's showing up on time and getting your part done — but deeper, it's trusting that someone has my best interests at heart, and knowing I have theirs. It's the foundation for all my relationships: friends, family, co-workers, and the partners of the organizations I work with.",
+  },
+  {
+    n: "02",
+    title: "Ambition",
+    body: "It's almost exclusively the trait I look for when hiring interns. Whether it's the gym, academics, or sport, the hunger I pour into these things feels almost primal — and people with that same level of obsession naturally become the people I want to work with.",
+  },
+];
+---
+
+<Layout
+  title="Values — Frank Niu"
+  description="What Frank Niu optimizes for — the principles behind the work."
+>
+  <section class="vp" id="values" aria-labelledby="vp-heading">
+    <div class="container">
+      <header class="vp__head" data-reveal>
+        <p class="label">§ Values — what I optimize for</p>
+        <h1 class="display vp__title" id="vp-heading">What I optimize for.</h1>
+        <p class="vp__blurb">
+          The handful of principles I keep coming back to — in the work, and out of it.
+        </p>
+      </header>
+
+      <ol class="vp__list">
+        {
+          values.map((v) => (
+            <li class="vp__item" data-reveal>
+              <span class="mono vp__n">{v.n}</span>
+              <div class="vp__body">
+                <h2 class="vp__name">{v.title}</h2>
+                <p class="vp__text">{v.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+  <Footer />
+</Layout>
+
+<style>
+  .vp {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem) clamp(2rem, 1rem + 3vw, 4rem);
+  }
+  .vp__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    max-width: 32ch;
+    margin-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+  .vp__title {
+    font-size: var(--fs-display);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+  }
+  .vp__blurb {
+    color: var(--ink-dim);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+  }
+  .vp__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .vp__item {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem) 0.5rem;
+    border-bottom: 1px solid var(--line);
+    transition: padding-left var(--dur) var(--ease-out);
+  }
+  .vp__item:hover {
+    padding-left: 1.25rem;
+  }
+  .vp__n {
+    font-size: var(--fs-small);
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .vp__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .vp__text {
+    color: var(--ink-dim);
+    max-width: 60ch;
+  }
+
+  @media (max-width: 560px) {
+    .vp__item {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      gap: 1rem;
+    }
+    .vp__item:hover {
+      padding-left: 0.5rem;
+    }
+  }
+</style>

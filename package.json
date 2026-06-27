@@ -1,0 +1,17 @@
+{
+  "name": "frank-website",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.2.10",
+    "@fontsource-variable/geist-mono": "^5.2.8",
+    "@fontsource/geist-sans": "^5.2.5",
+    "astro": "^5.6.0",
+    "three": "^0.180.0"
+  }
+}

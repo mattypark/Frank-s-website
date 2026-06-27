@@ -1,0 +1,666 @@
+---
+// Cylindrical page-carousel (Three.js). Each curved panel is a page; drag to
+// rotate, click to enter. Ambient 3D glass shards drift behind it. Falls back
+// to an accessible card grid when WebGL is unavailable or motion is reduced.
+const pages = [
+  { title: "Story", href: "/story", caption: "The timeline, birth to now", idx: "01" },
+  { title: "Work", href: "/work", caption: "What I'm building", idx: "02" },
+  { title: "Writing", href: "/writing", caption: "Essays & papers", idx: "03" },
+  { title: "Values", href: "/values", caption: "What I optimize for", idx: "04" },
+  { title: "Hobbies", href: "/hobbies", caption: "Outside the work", idx: "05" },
+];
+
+// keep in sync with TINTS in the client script below
+const TINTS: Record<string, string> = {
+  "01": "rgb(52,74,114)",
+  "02": "rgb(46,74,74)",
+  "03": "rgb(42,38,32)",
+  "04": "rgb(61,58,36)",
+  "05": "rgb(59,86,128)",
+};
+const cardTint = (idx: string) => TINTS[idx] ?? "rgb(40,40,40)";
+---
+
+<section class="cv" id="explore" aria-labelledby="cv-heading">
+  <div class="cv__persp" data-cv-persp>
+   <div class="cv__reveal">
+    <div class="container">
+     <div class="cv__head" data-reveal>
+      <h1 class="display cv__title" id="cv-heading">Pick a thread.</h1>
+     </div>
+    </div>
+
+    <div class="cv__stage" data-cv-stage>
+    <canvas class="cv__canvas" data-cv-canvas aria-hidden="true"></canvas>
+
+    <div class="cv__hud" aria-hidden="true">
+      <button class="cv__arrow" data-cv-prev aria-label="Previous">←</button>
+      <a class="cv__enter mono" data-cv-enter href="/story">
+        <span data-cv-enter-label>Story</span>
+        <span class="cv__enter-go">enter ↗</span>
+      </a>
+      <button class="cv__arrow" data-cv-next aria-label="Next">→</button>
+    </div>
+
+    <ul class="cv__cards" data-cv-cards>
+      {
+        pages.map((p) => (
+          <li class="cv__card" style={`--tint: ${cardTint(p.idx)}`}>
+            <a href={p.href} class="cv__card-link">
+              <span class="mono cv__card-idx">[ {p.idx} ]</span>
+              <span class="display cv__card-title">{p.title}</span>
+              <span class="cv__card-caption">{p.caption}</span>
+              <span class="cv__card-go" aria-hidden="true">↗</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    </div>
+   </div>
+  </div>
+
+  <script
+    type="application/json"
+    set:html={JSON.stringify(pages)}
+    id="cv-pages-data"
+  />
+
+</section>
+
+<style>
+  .cv {
+    position: relative;
+    padding-block: clamp(0.75rem, 0.4rem + 1vw, 1.4rem) clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
+  }
+  .cv__head {
+    margin-bottom: clamp(0.5rem, 0.2rem + 1vw, 1.1rem);
+  }
+  .cv__title {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink-dim);
+  }
+
+  .cv__stage {
+    position: relative;
+    width: 100%;
+    height: clamp(380px, 66dvh, 700px);
+    touch-action: pan-y;
+  }
+  @media (max-width: 480px) {
+    .cv__enter {
+      min-width: 8.5rem;
+    }
+  }
+  .cv__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    cursor: grab;
+  }
+  .cv__canvas.is-dragging {
+    cursor: grabbing;
+  }
+
+  /* HUD shown only when 3D is live */
+  .cv__hud {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(0.5rem, 0vw, 1rem);
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    z-index: 2;
+  }
+  .cv__arrow {
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--paper) 70%, transparent);
+    backdrop-filter: blur(6px);
+    font-family: var(--font-mono);
+    color: var(--ink);
+    transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out);
+  }
+  .cv__arrow:hover {
+    background: var(--ink);
+    color: var(--paper-raised);
+    border-color: var(--ink);
+  }
+  .cv__enter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--paper-raised);
+    font-size: var(--fs-small);
+    min-width: 11rem;
+    justify-content: center;
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .cv__enter:hover {
+    transform: translateY(-2px);
+  }
+  .cv__enter-go {
+    opacity: 0.6;
+    font-size: var(--fs-micro);
+  }
+
+  /* fallback / a11y cards */
+  .cv__cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: clamp(0.75rem, 0.4rem + 1vw, 1.25rem);
+    height: 100%;
+    align-content: center;
+  }
+  .cv__card {
+    min-height: 0;
+  }
+  .cv__card-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    height: 100%;
+    min-height: 9rem;
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(155deg, color-mix(in srgb, var(--tint) 90%, #15120d), #15120d);
+    color: var(--paper-raised);
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  }
+  .cv__card-link:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -28px rgba(21, 18, 13, 0.7);
+  }
+  .cv__card-idx {
+    font-size: var(--fs-micro);
+    color: color-mix(in srgb, var(--paper-raised) 60%, transparent);
+    letter-spacing: 0.1em;
+  }
+  .cv__card-title {
+    font-size: clamp(1.6rem, 1rem + 2vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: auto;
+  }
+  .cv__card-caption {
+    font-size: var(--fs-small);
+    color: color-mix(in srgb, var(--paper-raised) 72%, transparent);
+  }
+  .cv__card-go {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.2rem;
+    color: color-mix(in srgb, var(--paper-raised) 70%, transparent);
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .cv__card-link:hover .cv__card-go {
+    transform: translate(3px, -3px);
+  }
+
+  /* when 3D is live: hide the cards visually but keep them for screen readers */
+  .cv__stage[data-cv-ready] .cv__canvas {
+    display: block;
+  }
+  .cv__stage[data-cv-ready] .cv__hud {
+    display: flex;
+  }
+  .cv__stage[data-cv-ready] .cv__cards {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+</style>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+
+  type Page = { title: string; href: string; caption: string; idx: string };
+
+  async function initCarousel() {
+    const stage = document.querySelector<HTMLElement>("[data-cv-stage]");
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-cv-canvas]");
+    if (!stage || !canvas || stage.dataset.cvReady !== undefined) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hasWebGL = (() => {
+      try {
+        const c = document.createElement("canvas");
+        return !!(
+          window.WebGLRenderingContext &&
+          (c.getContext("webgl2") || c.getContext("webgl"))
+        );
+      } catch {
+        return false;
+      }
+    })();
+    if (reduce || !hasWebGL) return; // keep accessible card grid
+
+    const pages: Page[] = JSON.parse(
+      document.getElementById("cv-pages-data")?.textContent || "[]"
+    );
+    if (!pages.length) return;
+
+    const THREE = await import("three");
+    THREE.ColorManagement.enabled = false; // author colors pass through as-is
+    await (document as any).fonts?.ready;
+
+    // ---------- per-panel animated shaders ----------
+    const VERT = `
+      varying vec2 vUv;
+      void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+    `;
+    const FRAG = `
+      precision highp float;
+      varying vec2 vUv;
+      uniform float uTime, uVariant;
+      uniform vec3 uA, uB, uC;
+      uniform sampler2D uText;
+
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453123); }
+      float noise(vec2 p){
+        vec2 i=floor(p), f=fract(p);
+        float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.));
+        vec2 u=f*f*(3.-2.*f);
+        return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+      }
+      float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.0; a*=0.5; } return v; }
+
+      vec3 meshGradient(vec2 uv){
+        float t=uTime*0.18;
+        vec2 p1=vec2(0.5+0.35*sin(t*1.1), 0.5+0.30*cos(t*0.9));
+        vec2 p2=vec2(0.5+0.40*cos(t*0.7), 0.5+0.35*sin(t*1.3));
+        vec2 p3=vec2(0.5+0.30*sin(t*0.5+2.0), 0.5+0.40*cos(t*0.6+1.0));
+        float d1=1.0/(0.05+distance(uv,p1)*2.2);
+        float d2=1.0/(0.05+distance(uv,p2)*2.2);
+        float d3=1.0/(0.05+distance(uv,p3)*2.2);
+        return (uA*d1+uB*d2+uC*d3)/(d1+d2+d3);
+      }
+      vec3 dotOrbit(vec2 uv){
+        vec3 bg=mix(uA,uB,uv.y);
+        vec2 g=uv*vec2(9.0,6.0);
+        vec2 cell=fract(g)-0.5; vec2 id=floor(g);
+        float ph=hash(id)*6.2831;
+        vec2 orb=0.30*vec2(cos(uTime*1.1+ph), sin(uTime*1.1+ph));
+        return mix(bg, uC, smoothstep(0.20,0.10,length(cell-orb)));
+      }
+      vec3 waves(vec2 uv){
+        float n=fbm(uv*3.0+vec2(uTime*0.15,0.0));
+        float w=sin((uv.x+n*0.6)*9.0 + uTime*1.2);
+        float m=smoothstep(-0.6,0.6, w+(uv.y-0.5)*2.0);
+        vec3 col=mix(uA,uB,m);
+        return mix(col,uC, smoothstep(0.4,0.9,n));
+      }
+      vec3 noiseField(vec2 uv){
+        float n=fbm(uv*3.0+vec2(uTime*0.08,uTime*0.05));
+        float n2=fbm(uv*6.0-uTime*0.10);
+        vec3 col=mix(uA,uB,n);
+        return mix(col,uC, n2*0.7);
+      }
+      vec3 particles(vec2 uv){
+        vec3 bg=mix(uB,uA, length(uv-0.5));
+        float acc=0.0;
+        for(int i=0;i<7;i++){
+          float fi=float(i);
+          vec2 pp=vec2(hash(vec2(fi,1.7)), hash(vec2(fi,4.3)));
+          pp.x=fract(pp.x+uTime*0.05*(0.6+fi*0.05));
+          pp.y=fract(pp.y+uTime*0.04*(0.6+fi*0.04));
+          acc+=smoothstep(0.14,0.0, distance(uv,pp));
+        }
+        return mix(bg, uC, clamp(acc,0.0,1.0));
+      }
+
+      void main(){
+        vec2 uv=vUv;
+        vec3 col;
+        if(uVariant<0.5) col=meshGradient(uv);
+        else if(uVariant<1.5) col=dotOrbit(uv);
+        else if(uVariant<2.5) col=waves(uv);
+        else if(uVariant<3.5) col=noiseField(uv);
+        else col=particles(uv);
+        col*=0.82;
+        col*=1.0-0.45*length(uv-0.5);
+        vec4 tx=texture2D(uText, uv);
+        col=mix(col, tx.rgb, tx.a);
+        gl_FragColor=vec4(col,1.0);
+      }
+    `;
+    // variant + 3-colour palette per page (distinctive shader + colour each)
+    const SHADERS: Record<string, { variant: number; a: number; b: number; c: number }> = {
+      "01": { variant: 0, a: 0x1b2a4a, b: 0x34507e, c: 0x6f8fc0 }, // Story — mesh, ink blue
+      "02": { variant: 1, a: 0x14302c, b: 0x2e5a52, c: 0x76b0a0 }, // Work — dot orbit, teal
+      "03": { variant: 2, a: 0x1a160f, b: 0x3a3020, c: 0x8a7048 }, // Writing — waves, warm
+      "04": { variant: 3, a: 0x23210f, b: 0x46431f, c: 0x9a9648 }, // Values — noise, olive
+      "05": { variant: 4, a: 0x1c2c44, b: 0x3b5680, c: 0x86a6d6 }, // Hobbies — particles, blue
+    };
+
+    // ---------- panel textures ----------
+    const drawPanel = (p: Page) => {
+      const W = 1024;
+      const H = 620;
+      const c = document.createElement("canvas");
+      c.width = W;
+      c.height = H;
+      const x = c.getContext("2d")!;
+      // transparent background — each panel's shader paints the animated fill
+      x.fillStyle = "rgba(236,233,225,0.10)";
+      x.font = `700 360px "Bricolage Grotesque Variable", serif`;
+      x.textAlign = "right";
+      x.textBaseline = "alphabetic";
+      x.fillText(p.idx, W - 44, H - 70);
+
+      x.strokeStyle = "rgba(236,233,225,0.22)";
+      x.lineWidth = 2;
+      x.strokeRect(28, 28, W - 56, H - 56);
+
+      x.fillStyle = "rgba(236,233,225,0.6)";
+      x.font = `500 26px "Geist Mono Variable", monospace`;
+      x.textAlign = "left";
+      x.fillText(`[ ${p.idx} ]`, 60, 86);
+
+      x.fillStyle = "#efe9dd";
+      x.font = `700 132px "Bricolage Grotesque Variable", serif`;
+      x.fillText(p.title, 56, H - 150);
+
+      x.fillStyle = "rgba(236,233,225,0.66)";
+      x.font = `400 34px "Geist Mono Variable", monospace`;
+      x.fillText(p.caption, 60, H - 90);
+
+      x.fillStyle = "rgba(236,233,225,0.5)";
+      x.font = `500 26px "Geist Mono Variable", monospace`;
+      x.fillText("enter ↗", 60, H - 50);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.anisotropy = 4;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    };
+
+    // ---------- scene ----------
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setClearColor(0x000000, 0);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+
+    const R = 5.2;
+    const step = (Math.PI * 2) / pages.length;
+    const arc = step * 0.82;
+    const panelW = 2 * Math.PI * R * (arc / (Math.PI * 2));
+    const panelH = panelW * 0.6;
+
+    const curvedGeo = (w: number, h: number, radius: number) => {
+      const geo = new THREE.PlaneGeometry(w, h, 30, 1);
+      const pos = geo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const px = pos.getX(i);
+        const ang = px / radius;
+        pos.setX(i, Math.sin(ang) * radius);
+        pos.setZ(i, Math.cos(ang) * radius - radius);
+      }
+      pos.needsUpdate = true;
+      geo.computeVertexNormals();
+      return geo;
+    };
+
+    const wheel = new THREE.Group();
+    scene.add(wheel);
+    const geo = curvedGeo(panelW, panelH, R);
+    const panelMaterials: any[] = [];
+    pages.forEach((p, i) => {
+      const cfg = SHADERS[p.idx] || SHADERS["01"];
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: VERT,
+        fragmentShader: FRAG,
+        side: THREE.DoubleSide,
+        uniforms: {
+          uTime: { value: 0 },
+          uVariant: { value: cfg.variant },
+          uA: { value: new THREE.Color(cfg.a) },
+          uB: { value: new THREE.Color(cfg.b) },
+          uC: { value: new THREE.Color(cfg.c) },
+          uText: { value: drawPanel(p) },
+        },
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      const a = i * step;
+      mesh.position.set(Math.sin(a) * R, 0, Math.cos(a) * R);
+      mesh.rotation.y = a;
+      wheel.add(mesh);
+      panelMaterials.push(mat);
+    });
+
+    // ---------- ambient glass shards ----------
+    const shardGroup = new THREE.Group();
+    scene.add(shardGroup);
+    const shardGeoms = [
+      new THREE.TetrahedronGeometry(1, 0),
+      new THREE.OctahedronGeometry(1, 0),
+      new THREE.IcosahedronGeometry(1, 0),
+    ];
+    const shardColors = [0x344a72, 0x788ca5, 0xc2bbac, 0x7e968a];
+    const shards: Array<{ mesh: any; rx: number; ry: number; drift: number; phase: number }> = [];
+    const shardCount = window.innerWidth < 700 ? 8 : 13; // fewer on phones
+    for (let i = 0; i < shardCount; i++) {
+      const g = shardGeoms[i % shardGeoms.length];
+      const mat = new THREE.MeshStandardMaterial({
+        color: shardColors[i % shardColors.length],
+        transparent: true,
+        opacity: 0.34,
+        roughness: 0.12,
+        metalness: 0.1,
+        flatShading: true,
+      });
+      const mesh = new THREE.Mesh(g, mat);
+      mesh.scale.setScalar(0.5 + Math.random() * 1.2);
+      mesh.position.set(
+        (Math.random() - 0.5) * 18,
+        (Math.random() - 0.5) * 9,
+        -2 - Math.random() * 7
+      );
+      mesh.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
+      shardGroup.add(mesh);
+      shards.push({
+        mesh,
+        rx: (Math.random() - 0.5) * 0.004,
+        ry: (Math.random() - 0.5) * 0.004,
+        drift: 0.15 + Math.random() * 0.2,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+    const key = new THREE.DirectionalLight(0xffffff, 1.4);
+    key.position.set(4, 6, 8);
+    scene.add(key);
+
+    // ---------- camera + birds-eye entry ----------
+    // Entry swoops from a top-down, birds-eye view of the ring down to the
+    // surface (front) view. Plays once per full load (window flag survives
+    // View Transition navigations); skipped for reduced motion.
+    const camStartPos = new THREE.Vector3(0, 11, 3.4); // high above, looking down
+    const camStartTarget = new THREE.Vector3(0, 0, 0);
+    const camNormalPos = new THREE.Vector3();
+    const camNormalTarget = new THREE.Vector3();
+    let doEntry = !(window as any).__cvEntered && !reduce;
+    const entryDur = 2300;
+    let entryStart = 0;
+    const curTarget = new THREE.Vector3();
+
+    const resize = () => {
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      // cap pixel ratio harder on phones to keep the shaders cheap
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, w < 700 ? 1.5 : 2));
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      const fit = Math.max(1, 1.15 - w / 1400);
+      camNormalPos.set(0, 0, R + 6.2 * fit);
+      camNormalTarget.set(0, 0, R * 0.35);
+      if (!doEntry) {
+        camera.position.copy(camNormalPos);
+        camera.lookAt(camNormalTarget);
+      }
+      camera.updateProjectionMatrix();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    if (doEntry) {
+      camera.position.copy(camStartPos);
+      curTarget.copy(camStartTarget);
+      camera.lookAt(curTarget);
+    }
+
+    // ---------- interaction ----------
+    let rot = 0;
+    let target = 0;
+    const enterLink = stage.querySelector<HTMLAnchorElement>("[data-cv-enter]")!;
+    const enterLabel = stage.querySelector<HTMLElement>("[data-cv-enter-label]")!;
+
+    const activeIndex = () =>
+      ((Math.round(-target / step) % pages.length) + pages.length) % pages.length;
+    const syncEnter = () => {
+      const p = pages[activeIndex()];
+      enterLabel.textContent = p.title;
+      enterLink.href = p.href;
+    };
+    const snap = () => {
+      target = Math.round(target / step) * step;
+      syncEnter();
+    };
+
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startTarget = 0;
+    canvas.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startTarget = target;
+      canvas.classList.add("is-dragging");
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      target = startTarget + dx * 0.006;
+    });
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      canvas.classList.remove("is-dragging");
+      snap();
+    };
+    canvas.addEventListener("pointerup", release);
+    canvas.addEventListener("pointercancel", release);
+    canvas.addEventListener("click", () => {
+      if (!moved) navigate(pages[activeIndex()].href);
+    });
+
+    stage.querySelector("[data-cv-prev]")?.addEventListener("click", () => {
+      target += step;
+      snap();
+    });
+    stage.querySelector("[data-cv-next]")?.addEventListener("click", () => {
+      target -= step;
+      snap();
+    });
+    canvas.tabIndex = 0;
+    canvas.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        target += step;
+        snap();
+      } else if (e.key === "ArrowRight") {
+        target -= step;
+        snap();
+      } else if (e.key === "Enter") {
+        navigate(pages[activeIndex()].href);
+      }
+    });
+
+    syncEnter();
+    stage.dataset.cvReady = "";
+
+    // ---------- loop ----------
+    let raf = 0;
+    let running = false;
+    const t0 = performance.now();
+    const frame = () => {
+      rot += (target - rot) * 0.09;
+      wheel.rotation.y = rot;
+
+      if (doEntry) {
+        if (!entryStart) entryStart = performance.now();
+        const p = Math.min((performance.now() - entryStart) / entryDur, 1);
+        const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; // easeInOutCubic
+        camera.position.lerpVectors(camStartPos, camNormalPos, e);
+        curTarget.lerpVectors(camStartTarget, camNormalTarget, e);
+        camera.lookAt(curTarget);
+        if (p >= 1) {
+          doEntry = false;
+          (window as any).__cvEntered = true;
+        }
+      }
+
+      const t = (performance.now() - t0) / 1000;
+      for (const m of panelMaterials) m.uniforms.uTime.value = t;
+      for (const s of shards) {
+        s.mesh.rotation.x += s.rx;
+        s.mesh.rotation.y += s.ry;
+        s.mesh.position.y += Math.sin(t * s.drift + s.phase) * 0.0016;
+      }
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(frame);
+    };
+    const start = () => {
+      if (running) return;
+      running = true;
+      frame();
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => (e.isIntersecting ? start() : stop())),
+      { threshold: 0 }
+    );
+    io.observe(canvas);
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stop() : start()
+    );
+
+    const dispose = () => {
+      stop();
+      io.disconnect();
+      renderer.dispose();
+      window.removeEventListener("resize", resize);
+      document.removeEventListener("astro:before-swap", dispose);
+    };
+    document.addEventListener("astro:before-swap", dispose);
+  }
+
+  document.addEventListener("astro:page-load", initCarousel);
+</script>
