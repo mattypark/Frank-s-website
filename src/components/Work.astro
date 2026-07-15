@@ -1,13 +1,36 @@
 ---
 // Work — a "currently" index. Axiom Pathways leads as a stat spotlight;
-// the rest read as a tight ledger of roles.
-const roles = [
+// the rest read as a tight ledger of roles + projects.
+const items = [
   {
     index: "02",
-    role: "Director of Finance",
-    org: "Youth Civics Network",
+    title: "Director of Finance — Youth Civics Network",
     note: "YCN aims to fix declining civics participation nationwide — a national curriculum that state leads adapt locally. Through grant writing, I helped define key features like translating context across languages and providing tech support for students in need, and raised $7,500 for the cause.",
     tag: "Nonprofit",
+  },
+  {
+    index: "03",
+    title: "Spotify Graph",
+    note: "An open-source web app that turns Spotify playlists into annotatable visual webs — add notes and lyrics, and a song grows bigger as it collects more meaning. I built it because I wanted a cooler way to show a friend why certain songs mattered to me. It taught me Spotify OAuth via their developer APIs and the security work behind making it shareable.",
+    tag: "Open source · Web app",
+  },
+  {
+    index: "04",
+    title: "Bayou Guard",
+    note: "A flood-prediction web app for Harris County (Congressional App Challenge) where I'm project manager over a team of four. An ML model forecasts flooding, notifies users, maps nearby safe zones, and estimates when the water will recede. Built for the contest, but I believe in it enough to keep it running afterward.",
+    tag: "Project lead · ML",
+  },
+  {
+    index: "05",
+    title: "Atomic Flashcards Generator",
+    note: "An open-source, AI-powered generator for “atomic” flashcards — separate cards for the word, its definition, and its roots, the way med students memorize huge volumes fast. I built it after digging into how to actually retain SAT vocabulary instead of cramming it.",
+    tag: "Open source · AI",
+  },
+  {
+    index: "06",
+    title: "FlashGate",
+    note: "A screen-time app that trades flashcard reviews for minutes — each card earns 5, capped at an hour. Inspired by a founder who gamified his screen limit, I aimed it at vocabulary. It builds on the atomic-flashcards work using Anki's open-source FSRS scheduler, with a self-rating spectrum instead of a gameable “good” button so the reward can't be cheated. Still in development, open-sourced on GitHub.",
+    tag: "Open source · In progress",
   },
 ];
 ---
@@ -43,13 +66,11 @@ const roles = [
 
     <ol class="work__list">
       {
-        roles.map((r) => (
+        items.map((r) => (
           <li class="work__row" data-reveal>
             <span class="mono work__idx">[{r.index}]</span>
             <div class="work__role">
-              <h3 class="work__role-name">
-                {r.role} <span class="work__at">at</span> <strong>{r.org}</strong>
-              </h3>
+              <h3 class="work__role-name">{r.title}</h3>
               <p class="work__note">{r.note}</p>
             </div>
             <span class="label work__tag">{r.tag}</span>
@@ -148,17 +169,11 @@ const roles = [
     color: var(--accent);
   }
   .work__role-name {
+    font-family: var(--font-display);
     font-size: var(--fs-h3);
-    font-weight: 500;
-    color: var(--ink-dim);
-  }
-  .work__role-name strong {
-    color: var(--ink);
     font-weight: 600;
-  }
-  .work__at {
-    color: var(--ink-faint);
-    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--ink);
   }
   .work__note {
     color: var(--ink-dim);
