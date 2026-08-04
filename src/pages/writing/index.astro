@@ -21,8 +21,9 @@ const fmt = (d: Date) =>
         <p class="label">§ Writing — the portfolio</p>
         <h1 class="display wr__title">Essays &amp; papers.</h1>
         <p class="wr__intro">
-          Things I've written for class and on my own — mostly about finance,
-          AI, and what we owe the next set of teenagers.
+          Things I've written for class, for Axiom Pathways, and for college
+          applications — mostly about finance, AI, and what we owe the next
+          set of teenagers.
         </p>
       </header>
 
@@ -35,6 +36,9 @@ const fmt = (d: Date) =>
         </button>
         <button class="wr__chip" data-filter="outside" aria-pressed="false">
           Outside <span class="wr__count">{essays.filter((e) => e.data.category === "outside").length}</span>
+        </button>
+        <button class="wr__chip" data-filter="college" aria-pressed="false">
+          College <span class="wr__count">{essays.filter((e) => e.data.category === "college").length}</span>
         </button>
       </div>
 

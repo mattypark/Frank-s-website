@@ -7,8 +7,9 @@ const writing = defineCollection({
   loader: glob({ pattern: ["**/*.md", "!_*.md"], base: "./src/content/writing" }),
   schema: z.object({
     title: z.string(),
-    // "school" = essays written for class; "outside" = everything else.
-    category: z.enum(["school", "outside"]),
+    // "school" = essays written for class; "outside" = writing published
+    // elsewhere (e.g. Axiom Pathways); "college" = college application essays.
+    category: z.enum(["school", "outside", "college"]),
     date: z.coerce.date(),
     summary: z.string().optional(),
     draft: z.boolean().default(false),
