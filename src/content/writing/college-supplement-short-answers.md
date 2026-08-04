@@ -2,7 +2,7 @@
 title: College Supplement — Short Answers
 category: college
 date: 2026-08-02
-summary: Seven short-answer supplemental responses from a college application.
+summary: Eleven short-answer supplemental responses from college applications.
 draft: false
 ---
 
@@ -33,3 +33,19 @@ Eating competitions at Shabu all-you-can-eat hotpot with friends from Calc class
 **What would you contribute to your future college campus community?**
 
 Growing up where steakhouses shared parking lots with dumpling houses, I cook for both cultures: Tonkatsu Ramen one night and fried chicken the next. I'd use that range to promote culinary arts on campus.
+
+**What is the most significant challenge that society faces today?** *(3–50 words)*
+
+11 PM: students scurry as they finish the Algebra homework due in 59 minutes. 5:30 AM: REM sleep assassinated by the ruthless radial ringtone. 7:20 AM, first period: the inverse function test, proving that recall is impossible through pure might. Schools pit learning against comfort and function.
+
+**How did you spend your last two summers?** *(3–50 words)*
+
+2025: Took Sociology at Houston Community College; discovered my favorite workplace lunch (avocado sandwiches) while working 9–5 at the City of Houston; left 7 reviews on Goodreads. 2026: Proposed a bill to Representative Dr. Lalani at the state capitol; replaced cardio sessions with badminton; committed Drake's new albums to memory.
+
+**What historical moment or event do you wish you could have witnessed?** *(3–50 words)*
+
+September 1840: Republic of Texas President Mirabeau Lamar has fever dreams of imperializing his country. Debt is skyrocketing. What does he do? He rapidly mints more Redback notes, the official currency. Inflation becomes rampant, with currency barely worth its materials. Was he empowering his people, or the other way around?
+
+**List five things that are important to you.** *(3–50 words)*
+
+House music: homework soundtrack, gym anthem. Thrifted jeans: still has a pay stub from Beyoncé's '09 tour. Dumplings with spicy soy sauce: personal recipe of a Northerner by blood, Southerner by birth Chinese. Vaporeon plushie: a trophy won in front of a begrudging arcade crowd. My friends' unsolicited life updates.

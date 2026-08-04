@@ -5,30 +5,22 @@ import Footer from "../../components/Footer.astro";
 
 const allEssays = await getCollection("writing", ({ data }) => !data.draft);
 
-// The "Lesson N" marketing-curriculum pieces should always read in sequence
-// (1 -> 17), not by publish date. Pull them out, sort by lesson number, then
-// merge that block back into the rest of the list (still newest-first) at
-// the position its most recent entry would naturally fall.
+// Newest-first overall (purely chronological, no clustering). The one
+// exception: when two "Lesson N" pieces publish on the same day, the higher
+// lesson number sorts on top -- e.g. Lesson 17 above Lesson 16 above Lesson
+// 15 if all three share a date. Non-lesson pieces on that same date can
+// still fall anywhere among them; only the lesson-vs-lesson tie is fixed.
 const lessonNum = (title: string) => {
   const m = title.match(/^Lesson (\d+):/i);
   return m ? parseInt(m[1], 10) : null;
 };
-const lessons = allEssays
-  .filter((e) => lessonNum(e.data.title) !== null)
-  .sort((a, b) => lessonNum(a.data.title)! - lessonNum(b.data.title)!);
-const others = allEssays
-  .filter((e) => lessonNum(e.data.title) === null)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-let essays = others;
-if (lessons.length) {
-  const anchor = Math.max(...lessons.map((e) => e.data.date.valueOf()));
-  const insertAt = others.findIndex((e) => e.data.date.valueOf() < anchor);
-  essays =
-    insertAt === -1
-      ? [...others, ...lessons]
-      : [...others.slice(0, insertAt), ...lessons, ...others.slice(insertAt)];
-}
+const essays = allEssays.sort((a, b) => {
+  const dateDiff = b.data.date.valueOf() - a.data.date.valueOf();
+  if (dateDiff !== 0) return dateDiff;
+  const la = lessonNum(a.data.title) ?? -1;
+  const lb = lessonNum(b.data.title) ?? -1;
+  return lb - la;
+});
 
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
