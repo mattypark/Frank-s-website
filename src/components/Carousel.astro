@@ -480,9 +480,10 @@ const cardTint = (idx: string) => TINTS[idx] ?? "rgb(40,40,40)";
       shardGroup.add(mesh);
       shards.push({
         mesh,
-        rx: (Math.random() - 0.5) * 0.004,
-        ry: (Math.random() - 0.5) * 0.004,
-        drift: 0.15 + Math.random() * 0.2,
+        // +50% drift speed
+        rx: (Math.random() - 0.5) * 0.006,
+        ry: (Math.random() - 0.5) * 0.006,
+        drift: 0.225 + Math.random() * 0.3,
         phase: Math.random() * Math.PI * 2,
       });
     }
